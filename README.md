@@ -8,7 +8,7 @@ The purpose of the Property Services Project (PSP) is to implement a solution th
 
 ## Project Status
 
-> **IN DEVELOPMENT**
+> **Provisioning**
 
 ## Development
 
@@ -17,7 +17,7 @@ The purpose of the Property Services Project (PSP) is to implement a solution th
 ## License
 
 ```
-Copyright 2020 Province of British Columbia
+Copyright 2021 Province of British Columbia
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
