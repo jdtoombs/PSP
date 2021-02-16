@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
+<<<<<<< HEAD
     <TargetFramework>netcoreapp3.1</TargetFramework>
+=======
+    <TargetFramework>net3.1</TargetFramework>
+    <RuntimeIdentifier>rhel.7-x64</RuntimeIdentifier>
+>>>>>>> 4f738132fbf08fce1d28213f4d2eb5869f16bcae
   </PropertyGroup>
 
 </Project>
