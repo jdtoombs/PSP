@@ -1,4 +1,0 @@
-C:\Users\sookeke\PSP\PimsHelloWorld\obj\Debug\net48\PimsHelloWorld.csprojAssemblyReference.cache
-C:\Users\sookeke\PSP\PimsHelloWorld\obj\Debug\net48\PimsHelloWorld.AssemblyInfoInputs.cache
-C:\Users\sookeke\PSP\PimsHelloWorld\obj\Debug\net48\PimsHelloWorld.AssemblyInfo.cs
-C:\Users\sookeke\PSP\PimsHelloWorld\obj\Debug\net48\PimsHelloWorld.csproj.CoreCompileInputs.cache

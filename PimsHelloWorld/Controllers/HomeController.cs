@@ -5,9 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using PimsHelloWorld.Models;
+using pimshelloworld.Models;
 
-namespace PimsHelloWorld.Controllers
+namespace pimshelloworld.Controllers
 {
     public class HomeController : Controller
     {

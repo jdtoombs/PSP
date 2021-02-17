@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sookeke\\PSP\\PimsHelloWorld\\PimsHelloWorld.csproj": {}
+    "C:\\Users\\sookeke\\PSP\\pimshelloworld\\pimshelloworld.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sookeke\\PSP\\PimsHelloWorld\\PimsHelloWorld.csproj": {
+    "C:\\Users\\sookeke\\PSP\\pimshelloworld\\pimshelloworld.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sookeke\\PSP\\PimsHelloWorld\\PimsHelloWorld.csproj",
-        "projectName": "PimsHelloWorld",
-        "projectPath": "C:\\Users\\sookeke\\PSP\\PimsHelloWorld\\PimsHelloWorld.csproj",
+        "projectUniqueName": "C:\\Users\\sookeke\\PSP\\pimshelloworld\\pimshelloworld.csproj",
+        "projectName": "pimshelloworld",
+        "projectPath": "C:\\Users\\sookeke\\PSP\\pimshelloworld\\pimshelloworld.csproj",
         "packagesPath": "C:\\Users\\sookeke\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sookeke\\PSP\\PimsHelloWorld\\obj\\",
+        "outputPath": "C:\\Users\\sookeke\\PSP\\pimshelloworld\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -29,7 +29,6 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
-            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -41,7 +40,6 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
-          "targetAlias": "netcoreapp3.1",
           "imports": [
             "net461",
             "net462",
@@ -52,16 +50,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[3.1.8, 3.1.8]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Host.win-x64",
-              "version": "[3.1.9, 3.1.9]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -70,7 +58,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
         }
       }
     }

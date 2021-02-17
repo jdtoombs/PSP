@@ -1,6 +1,6 @@
 using System;
 
-namespace PimsHelloWorld.Models
+namespace pimshelloworld.Models
 {
     public class ErrorViewModel
     {
