@@ -1,0 +1,40 @@
+{
+  // Use IntelliSense to find out which attributes exist for C# debugging
+  // Use hover for the description of the existing attributes
+  // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Tool-Converter",
+      "type": "coreclr",
+      "request": "launch",
+      "console": "internalConsole",
+      "preLaunchTask": "build",
+      "program": "${workspaceRoot}/tools/converters/excel/bin/Debug/netcoreapp3.1/Pims.Tools.Converters.ExcelConverter.dll",
+      "cwd": "${workspaceRoot}/tools/converters/excel",
+      "stopAtEntry": false
+    }, {
+      "name": ".NET Core Launch (api)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/backend/api/bin/Debug/netcoreapp3.1/Pims.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/backend/api",
+      "stopAtEntry": false,
+      "env": {
+          "ASPNETCORE_ENVIRONMENT": "Local",
+          "ASPNETCORE_URLS": "http://*:5000;https://*:433"
+      },
+      "sourceFileMap": {
+          "/Views": "${workspaceFolder}/backend/Views"
+      }
+  },
+    {
+      "name": ".NET Core Attach",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
+    }
+  ]
+}

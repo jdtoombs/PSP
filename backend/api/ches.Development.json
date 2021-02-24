@@ -1,0 +1,7 @@
+{
+  "Ches": {
+    "AuthUrl": "https://dev.oidc.gov.bc.ca/auth/realms/jbd6rnxw/protocol/openid-connect/token",
+    "HostUri": "https://ches-dev.pathfinder.gov.bc.ca/api/v1",
+    "BccUser": true
+  }
+}

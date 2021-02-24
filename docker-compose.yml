@@ -1,0 +1,83 @@
+version: "3.5"
+
+services:
+  ####################### Keycloak #######################
+  keycloak:
+    restart: on-failure:1
+    container_name: pims-keycloak
+    build:
+      context: ./auth/keycloak
+    env_file:
+      - auth/keycloak/.env
+    volumes:
+      - ./auth/keycloak/config/realm-export.json:/tmp/realm-export.json
+    ports:
+      - 8080:8080
+    networks:
+      - pims
+
+  ####################### Database #######################
+  database:
+    restart: on-failure:1
+    container_name: api-db
+    build:
+      context: database/mssql
+    env_file:
+      - database/mssql/.env
+    ports:
+      - "5433:1433"
+    volumes:
+      - api-db-data:/var/opt/mssql
+    networks:
+      - pims
+
+  ####################### Backend #######################
+  backend:
+    restart: on-failure:1
+    container_name: backend-api
+    build:
+      context: backend
+      args:
+        BUILD_CONFIGURATION: Debug
+    env_file: backend/api/.env
+    ports:
+      - "5001:443"
+      - "5000:8080"
+    depends_on:
+      - database
+      - keycloak
+    networks:
+      - pims
+
+  ####################### Frontend #######################
+  frontend:
+    stdin_open: true
+    tty: true
+    restart: on-failure:1
+    container_name: frontend-app
+    build:
+      context: frontend
+    volumes:
+      - ./frontend/src:/usr/app/src
+      - ./frontend/public:/usr/app/public
+      - frontend-node-cache:/usr/app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    env_file: ./frontend/.env
+    networks:
+      - pims
+
+####################### Networks Definition #######################
+networks:
+  pims:
+    name: pims-net
+    driver: bridge
+
+####################### Volumes Definition #######################
+volumes:
+  api-db-data:
+    name: pims-api-db-data
+  frontend-node-cache:
+    name: pims-frontend-node-cache

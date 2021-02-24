@@ -1,0 +1,2127 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ERP Approval Step ERP close out form tab renders correctly 1`] = `
+.c3 {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row-reverse;
+  -ms-flex-direction: row-reverse;
+  flex-direction: row-reverse;
+  margin: 0.5rem 0;
+  text-align: right;
+}
+
+.c0 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.c1 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-family: 'BCSans',Fallback,sans-serif;
+}
+
+.c2 {
+  text-align: center;
+  font-family: 'BCSans-Bold';
+  margin-bottom: 1.5rem;
+}
+
+<div
+  class="erpStep container-fluid"
+>
+  <form
+    action="#"
+  >
+    <div
+      class="c0 default-status"
+    >
+      <h5
+        class="c1"
+      >
+        Approved for Surplus Property Program
+      </h5>
+      <svg
+        fill="currentColor"
+        height="64"
+        size="64"
+        stroke="currentColor"
+        stroke-width="0"
+        style="color: rgb(32, 167, 77);"
+        viewBox="0 0 512 512"
+        width="64"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z"
+        />
+      </svg>
+      <h5
+        class="c1"
+      >
+        Approval Date 
+      </h5>
+    </div>
+    <div
+      class="c2"
+    >
+      Approved for ERP
+    </div>
+    <nav
+      class="nav nav-tabs"
+      role="tablist"
+    >
+      <a
+        aria-controls="approvalTabs-tabpane-projectInformation"
+        aria-selected="false"
+        class="nav-item nav-link"
+        data-rb-event-key="projectInformation"
+        href="#"
+        id="approvalTabs-tab-projectInformation"
+        role="tab"
+        tabindex="-1"
+      >
+        Project Information
+      </a>
+      <a
+        aria-controls="approvalTabs-tabpane-documentation"
+        aria-selected="false"
+        class="nav-item nav-link"
+        data-rb-event-key="documentation"
+        href="#"
+        id="approvalTabs-tab-documentation"
+        role="tab"
+        tabindex="-1"
+      >
+        Documentation
+      </a>
+      <a
+        aria-controls="approvalTabs-tabpane-enhancedReferralProcess"
+        aria-selected="false"
+        class="nav-item nav-link"
+        data-rb-event-key="enhancedReferralProcess"
+        href="#"
+        id="approvalTabs-tab-enhancedReferralProcess"
+        role="tab"
+        tabindex="-1"
+      >
+        Enhanced Referral Process
+      </a>
+      <a
+        aria-controls="approvalTabs-tabpane-closeOutForm"
+        aria-selected="true"
+        class="nav-item nav-link active"
+        data-rb-event-key="closeOutForm"
+        href="#"
+        id="approvalTabs-tab-closeOutForm"
+        role="tab"
+      >
+        Close Out Form
+      </a>
+    </nav>
+    <div
+      class="tab-content"
+    >
+      <div
+        aria-hidden="false"
+        aria-labelledby="approvalTabs-tab-closeOutForm"
+        class="fade tab-pane active show"
+        id="approvalTabs-tabpane-closeOutForm"
+        role="tabpanel"
+      >
+        <div
+          class="container-fluid"
+        >
+          <div
+            class="form-row"
+          >
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Project Number
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    disabled=""
+                    id="input-projectNumber"
+                    name="projectNumber"
+                    value="test-01"
+                  />
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Agency
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    disabled=""
+                    id="input-agency"
+                    name="agency"
+                    value=""
+                  />
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Sub Agency
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    disabled=""
+                    id="input-subAgency"
+                    name="subAgency"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Project Manager(s)
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    id="input-manager"
+                    name="manager"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>
+            Purchase Information
+          </h3>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Name of Purchaser
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    disabled=""
+                    id="input-purchaser"
+                    name="purchaser"
+                    value="purchaser"
+                  />
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Real Estate Agent
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    id="input-realtor"
+                    name="realtor"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Real Estate Agent Rate
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    id="input-realtorRate"
+                    name="realtorRate"
+                    value=""
+                  />
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Real Estate Commission Paid
+                </label>
+                <div
+                  class="col-md-4 form-group col"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="realtorCommission"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Assessed Value
+                </label>
+                <div
+                  class="col-md-4 form-group col"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="assessed"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Appraised Value
+                </label>
+                <div
+                  class="col-md-4 form-group col"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="appraised"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>
+            Sale Information
+          </h3>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Sales Completion Date
+                </label>
+                <div
+                  class="col-md-8 form-group"
+                >
+                  <div
+                    class="react-datepicker-wrapper"
+                  >
+                    <div
+                      class="react-datepicker__input-container"
+                    >
+                      <input
+                        autocomplete="off"
+                        class="form-control date-picker"
+                        id="datepicker-disposedOn"
+                        name="disposedOn"
+                        placeholder="--/--/----"
+                        type="text"
+                        value="01/01/2020"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Sales Adjustment Date
+                </label>
+                <div
+                  class="col-md-8 form-group"
+                >
+                  <div
+                    class="react-datepicker-wrapper"
+                  >
+                    <div
+                      class="react-datepicker__input-container"
+                    >
+                      <input
+                        autocomplete="off"
+                        class="form-control date-picker"
+                        id="datepicker-adjustedOn"
+                        name="adjustedOn"
+                        placeholder="--/--/----"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Actual Fiscal Year of Sale
+                </label>
+                <div
+                  class="col-md-8 form-group"
+                >
+                  <input
+                    class="form-control"
+                    name="actualFiscalYear"
+                    placeholder="YYYY/YYYY"
+                    value=""
+                  />
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Best Information of Future Planned Use
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    id="input-plannedFutureUse"
+                    name="plannedFutureUse"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>
+            Financial Summary
+          </h3>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-6"
+                >
+                  Sale Price
+                </label>
+                <div
+                  class="form-group col-md-6"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="market"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-6"
+                >
+                  Interest Component
+                </label>
+                <div
+                  class="form-group col-md-6"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="interestComponent"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-6"
+                >
+                  Cost of Sale
+                </label>
+                <div
+                  class="form-group col-md-6"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="salesCost"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-6"
+                >
+                  Net Book Value
+                </label>
+                <div
+                  class="form-group col-md-6"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="netBook"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+                style="border-top: 1px solid grey;"
+              >
+                <label
+                  class="form-label col-form-label col-md-6"
+                >
+                  Gain before SPL Cost
+                </label>
+                <div
+                  class="form-group col-md-6"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      disabled=""
+                      name="gainBeforeSpl"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-6"
+                >
+                  SPL Cost
+                </label>
+                <div
+                  class="form-group col-md-6"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="programCost"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+                style="border-top: 1px solid grey;"
+              >
+                <label
+                  class="form-label col-form-label col-md-6"
+                >
+                  Gain after SPL Cost
+                </label>
+                <div
+                  class="form-group col-md-6"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      disabled=""
+                      name="netProceeds"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Net Proceeds
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="netProceeds"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-1"
+            >
+               
+            </div>
+            <div
+              class="col"
+            >
+              <div
+                class="ProjectNotes form-row"
+              >
+                <div
+                  class="col form-group col"
+                >
+                  <label
+                    class="form-label"
+                    for="input-remediationNote"
+                  >
+                    Remediation (Not funded throuch COS. TRAN only)
+                  </label>
+                  <textarea
+                    class="col-md-10 form-control"
+                    id="input-remediationNote"
+                    name="remediationNote"
+                  />
+                </div>
+              </div>
+              <div
+                class="ProjectNotes form-row"
+              >
+                <div
+                  class="col form-group col"
+                >
+                  <label
+                    class="form-label"
+                    for="input-programCostNote"
+                  >
+                    SPL Cost Calculation Notes
+                  </label>
+                  <textarea
+                    class="col-md-10 form-control"
+                    id="input-programCostNote"
+                    name="programCostNote"
+                  />
+                </div>
+              </div>
+              <div
+                class="ProjectNotes form-row"
+              >
+                <div
+                  class="col form-group col"
+                >
+                  <label
+                    class="form-label"
+                    for="input-gainNote"
+                  >
+                    Gain after SPL Cost Calculation Notes
+                  </label>
+                  <textarea
+                    class="col-md-10 form-control"
+                    id="input-gainNote"
+                    name="gainNote"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col"
+            >
+              <div
+                class="ProjectNotes form-row"
+              >
+                <div
+                  class="col-md-11 form-group col"
+                >
+                  <label
+                    class="form-label"
+                    for="input-comments"
+                  >
+                    Project Comments
+                    <svg
+                      class="tooltip-icon"
+                      fill="currentColor"
+                      height="1em"
+                      stroke="currentColor"
+                      stroke-width="0"
+                      viewBox="0 0 512 512"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
+                      />
+                    </svg>
+                  </label>
+                  <textarea
+                    class="col-md-auto form-control"
+                    id="input-comments"
+                    name="comments"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>
+            OCG
+          </h3>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-2"
+                >
+                  OCG Gain / Loss
+                </label>
+                <div
+                  class="col-md-4 form-group col"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="ocgFinancialStatement"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                class="ProjectNotes form-row"
+              >
+                <div
+                  class="col-md-11 form-group col"
+                >
+                  <label
+                    class="form-label"
+                    for="input-salesHistoryNote"
+                  >
+                    OCG Variance Notes
+                    <svg
+                      class="tooltip-icon"
+                      fill="currentColor"
+                      height="1em"
+                      stroke="currentColor"
+                      stroke-width="0"
+                      viewBox="0 0 512 512"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
+                      />
+                    </svg>
+                  </label>
+                  <textarea
+                    class="col-md-auto form-control"
+                    id="input-salesHistoryNote"
+                    name="salesHistoryNote"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>
+            Signed by Chief Financial Officer
+          </h3>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Preliminary Form Signed By
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    id="input-preliminaryFormSignedBy"
+                    name="preliminaryFormSignedBy"
+                    value=""
+                  />
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Final Form Signed by
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <input
+                    class="form-control"
+                    id="input-finalFormSignedBy"
+                    name="finalFormSignedBy"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Signature Date
+                </label>
+                <div
+                  class="col-md-8 form-group"
+                >
+                  <div
+                    class="react-datepicker-wrapper"
+                  >
+                    <div
+                      class="react-datepicker__input-container"
+                    >
+                      <input
+                        autocomplete="off"
+                        class="form-control date-picker"
+                        id="datepicker-preliminaryFormSignedOn"
+                        name="preliminaryFormSignedOn"
+                        placeholder="--/--/----"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Signature Date
+                </label>
+                <div
+                  class="col-md-8 form-group"
+                >
+                  <div
+                    class="react-datepicker-wrapper"
+                  >
+                    <div
+                      class="react-datepicker__input-container"
+                    >
+                      <input
+                        autocomplete="off"
+                        class="form-control date-picker"
+                        id="datepicker-finalFormSignedOn"
+                        name="finalFormSignedOn"
+                        placeholder="--/--/----"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <h3>
+            Adjustment to Prior Year Sale
+          </h3>
+          <div
+            class="form-row"
+          >
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Adjustment to Prior Year Sale Amount
+                </label>
+                <div
+                  class="col-md-8 form-group col"
+                >
+                  <div
+                    class="input-tooltip-wrapper"
+                  >
+                    <input
+                      class="form-control input-number"
+                      name="priorYearAdjustmentAmount"
+                      placeholder=""
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-md-6"
+            >
+              <div
+                class="form-row"
+              />
+              <div
+                class="form-row"
+              >
+                <label
+                  class="form-label col-form-label col-md-4"
+                >
+                  Adjustment to Prior Year Sale Date
+                </label>
+                <div
+                  class="col-md-8 form-group"
+                >
+                  <div
+                    class="react-datepicker-wrapper"
+                  >
+                    <div
+                      class="react-datepicker__input-container"
+                    >
+                      <input
+                        autocomplete="off"
+                        class="form-control date-picker"
+                        id="datepicker-priorYearAdjustmentOn"
+                        name="priorYearAdjustmentOn"
+                        placeholder="--/--/----"
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="ProjectNotes form-row"
+          >
+            <div
+              class="col-md-12 form-group col"
+            >
+              <label
+                class="form-label"
+                for="input-adjustmentNote"
+              >
+                Adjustment to Prior Year Sale Notes
+              </label>
+              <textarea
+                class="col-md-auto form-control"
+                id="input-adjustmentNote"
+                name="adjustmentNote"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      style="text-align: right;"
+    />
+    <div
+      class="c3"
+    />
+    <div
+      class="c3"
+    >
+      <span>
+        <button
+          class="Button btn btn-primary"
+          style="margin-left: 10px;"
+          type="button"
+        >
+          <div
+            class="Button__value"
+          >
+            Save
+          </div>
+        </button>
+      </span>
+      <span>
+        <button
+          class="Button btn btn-danger"
+          type="button"
+        >
+          <div
+            class="Button__value"
+          >
+            Cancel Project
+          </div>
+        </button>
+      </span>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`ERP Approval Step renders correctly 1`] = `
+.c0 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.c1 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  font-family: 'BCSans',Fallback,sans-serif;
+}
+
+.c2 {
+  text-align: center;
+  font-family: 'BCSans-Bold';
+  margin-bottom: 1.5rem;
+}
+
+.c3 {
+  margin: 0.75rem 2rem 0.75rem 2rem;
+}
+
+<div
+  className="erpStep container-fluid"
+>
+  <form
+    action="#"
+    onReset={[Function]}
+    onSubmit={[Function]}
+  >
+    <div
+      className="c0 default-status"
+    >
+      <h5
+        className="c1"
+      >
+        Approved for Surplus Property Program
+      </h5>
+      <svg
+        fill="currentColor"
+        height={64}
+        size={64}
+        stroke="currentColor"
+        strokeWidth="0"
+        style={
+          Object {
+            "color": "#20a74d",
+          }
+        }
+        viewBox="0 0 512 512"
+        width={64}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M256 8C119.033 8 8 119.033 8 256s111.033 248 248 248 248-111.033 248-248S392.967 8 256 8zm0 48c110.532 0 200 89.451 200 200 0 110.532-89.451 200-200 200-110.532 0-200-89.451-200-200 0-110.532 89.451-200 200-200m140.204 130.267l-22.536-22.718c-4.667-4.705-12.265-4.736-16.97-.068L215.346 303.697l-59.792-60.277c-4.667-4.705-12.265-4.736-16.97-.069l-22.719 22.536c-4.705 4.667-4.736 12.265-.068 16.971l90.781 91.516c4.667 4.705 12.265 4.736 16.97.068l172.589-171.204c4.704-4.668 4.734-12.266.067-16.971z"
+        />
+      </svg>
+      <h5
+        className="c1"
+      >
+        Approval Date 
+      </h5>
+    </div>
+    <div
+      className="c2"
+    >
+      Approved for ERP
+    </div>
+    <nav
+      className="nav nav-tabs"
+      onKeyDown={[Function]}
+      role="tablist"
+    >
+      <a
+        aria-controls="approvalTabs-tabpane-projectInformation"
+        aria-selected={false}
+        className="nav-item nav-link"
+        data-rb-event-key="projectInformation"
+        href="#"
+        id="approvalTabs-tab-projectInformation"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+      >
+        Project Information
+      </a>
+      <a
+        aria-controls="approvalTabs-tabpane-documentation"
+        aria-selected={false}
+        className="nav-item nav-link"
+        data-rb-event-key="documentation"
+        href="#"
+        id="approvalTabs-tab-documentation"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+        tabIndex={-1}
+      >
+        Documentation
+      </a>
+      <a
+        aria-controls="approvalTabs-tabpane-enhancedReferralProcess"
+        aria-selected={true}
+        className="nav-item nav-link active"
+        data-rb-event-key="enhancedReferralProcess"
+        href="#"
+        id="approvalTabs-tab-enhancedReferralProcess"
+        onClick={[Function]}
+        onKeyDown={[Function]}
+        role="tab"
+      >
+        Enhanced Referral Process
+      </a>
+    </nav>
+    <div
+      className="tab-content"
+    >
+      <div
+        aria-hidden={false}
+        aria-labelledby="approvalTabs-tab-enhancedReferralProcess"
+        className="fade tab-pane active show"
+        id="approvalTabs-tabpane-enhancedReferralProcess"
+        role="tabpanel"
+      >
+        <div
+          className="AgencyResponseForm container-fluid"
+        >
+          <div
+            className="form-row"
+          >
+            <div
+              className="col"
+            >
+              <div
+                className="form-row"
+              >
+                <label
+                  className="form-label col-form-label col-md-8"
+                >
+                  Date of Initial Enhanced Referral Notification Sent
+                </label>
+                <div
+                  className="col-md-4 form-group"
+                >
+                  <div
+                    className="react-datepicker-wrapper"
+                  >
+                    <div
+                      className="react-datepicker__input-container"
+                    >
+                      <input
+                        autoComplete="off"
+                        className="form-control date-picker"
+                        disabled={true}
+                        id="datepicker-initialNotificationSentOn"
+                        name="initialNotificationSentOn"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onClick={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        placeholder="--/--/----"
+                        readOnly={false}
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="form-row"
+              >
+                <label
+                  className="form-label col-form-label col-md-8"
+                >
+                  Date of 30 Day Enhanced Referral Notification Sent
+                </label>
+                <div
+                  className="col-md-4 form-group"
+                >
+                  <div
+                    className="react-datepicker-wrapper"
+                  >
+                    <div
+                      className="react-datepicker__input-container"
+                    >
+                      <input
+                        autoComplete="off"
+                        className="form-control date-picker"
+                        disabled={true}
+                        id="datepicker-thirtyDayNotificationSentOn"
+                        name="thirtyDayNotificationSentOn"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onClick={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        placeholder="--/--/----"
+                        readOnly={false}
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="form-row"
+              >
+                <label
+                  className="form-label col-form-label col-md-8"
+                >
+                  Date of 60 Day Enhanced Referral Notification Sent
+                </label>
+                <div
+                  className="col-md-4 form-group"
+                >
+                  <div
+                    className="react-datepicker-wrapper"
+                  >
+                    <div
+                      className="react-datepicker__input-container"
+                    >
+                      <input
+                        autoComplete="off"
+                        className="form-control date-picker"
+                        disabled={true}
+                        id="datepicker-sixtyDayNotificationSentOn"
+                        name="sixtyDayNotificationSentOn"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onClick={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        placeholder="--/--/----"
+                        readOnly={false}
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className="form-row"
+              >
+                <label
+                  className="form-label col-form-label col-md-8"
+                >
+                  Date of 90 Day Enhanced Referral Notification Sent
+                </label>
+                <div
+                  className="col-md-4 form-group"
+                >
+                  <div
+                    className="react-datepicker-wrapper"
+                  >
+                    <div
+                      className="react-datepicker__input-container"
+                    >
+                      <input
+                        autoComplete="off"
+                        className="form-control date-picker"
+                        disabled={true}
+                        id="datepicker-ninetyDayNotificationSentOn"
+                        name="ninetyDayNotificationSentOn"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onClick={[Function]}
+                        onFocus={[Function]}
+                        onKeyDown={[Function]}
+                        placeholder="--/--/----"
+                        readOnly={false}
+                        type="text"
+                        value=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              className="col"
+              style={
+                Object {
+                  "padding": "0 0 0 10px",
+                }
+              }
+            >
+              <label
+                className="form-label"
+              >
+                <strong>
+                  Note: 
+                </strong>
+                Changing the dates on these fields does not change the date the notifications are sent from the Common Hosted Email Service (CHES), which is managed by the Exchange Lab.
+              </label>
+              <label
+                className="form-label"
+              >
+                The only way to stop future unsent notifications is to cancel the entire project.
+              </label>
+            </div>
+          </div>
+          <h3>
+            Agency Interest
+          </h3>
+          <div
+            className="row"
+          >
+            <div
+              className="col-md-5"
+            >
+              <div
+                className="form-group"
+              >
+                <div
+                  className="rbt"
+                  style={
+                    Object {
+                      "outline": "none",
+                      "position": "relative",
+                    }
+                  }
+                  tabIndex={-1}
+                >
+                  <div
+                    style={
+                      Object {
+                        "display": "flex",
+                        "flex": 1,
+                        "height": "100%",
+                        "position": "relative",
+                      }
+                    }
+                  >
+                    <input
+                      aria-autocomplete="both"
+                      aria-expanded={false}
+                      aria-haspopup="listbox"
+                      autoComplete="off"
+                      className="rbt-input-main form-control rbt-input"
+                      id="addAgencyResponse-field"
+                      name="addAgencyResponse"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      onClick={[Function]}
+                      onFocus={[Function]}
+                      onKeyDown={[Function]}
+                      placeholder="Enter an Agency"
+                      role="combobox"
+                      type="text"
+                      value=""
+                    />
+                    <input
+                      aria-hidden={true}
+                      className="rbt-input-hint"
+                      readOnly={true}
+                      style={
+                        Object {
+                          "backgroundColor": "transparent",
+                          "borderColor": "transparent",
+                          "boxShadow": "none",
+                          "color": "rgba(0, 0, 0, 0.35)",
+                          "left": 0,
+                          "pointerEvents": "none",
+                          "position": "absolute",
+                          "top": 0,
+                          "width": "100%",
+                        }
+                      }
+                      tabIndex={-1}
+                      value=""
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              className="col"
+            >
+              <button
+                className="btn btn-primary"
+                disabled={true}
+                onClick={[Function]}
+                type="button"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+          <div
+            className="row"
+          >
+            <div
+              className="col"
+            >
+              <div
+                className="PropertyListView container-fluid"
+              >
+                <div
+                  className="ScrollContainer"
+                >
+                  <div
+                    className="table"
+                    role="table"
+                    style={
+                      Object {
+                        "minWidth": undefined,
+                      }
+                    }
+                  >
+                    <div
+                      className="thead thead-light"
+                    >
+                      <div
+                        className="tr"
+                        role="row"
+                        style={
+                          Object {
+                            "display": "flex",
+                            "flex": "1 0 auto",
+                            "minWidth": "120px",
+                          }
+                        }
+                      >
+                        <div
+                          className="th reset-filter svg-btn"
+                        />
+                        <div
+                          className="th"
+                          colSpan={1}
+                          role="columnheader"
+                          style={
+                            Object {
+                              "alignItems": "center",
+                              "boxSizing": "border-box",
+                              "display": "flex",
+                              "flex": "100 0 auto",
+                              "justifyContent": "flex-start",
+                              "minWidth": "30px",
+                              "textAlign": "left",
+                              "width": "100px",
+                            }
+                          }
+                        >
+                          <div
+                            className="sortable-column"
+                          >
+                            Agency
+                            <span
+                              style={
+                                Object {
+                                  "flex": "1 1 auto",
+                                }
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div
+                          className="th"
+                          colSpan={1}
+                          role="columnheader"
+                          style={
+                            Object {
+                              "alignItems": "center",
+                              "boxSizing": "border-box",
+                              "display": "flex",
+                              "flex": "60 0 auto",
+                              "justifyContent": "flex-start",
+                              "minWidth": "30px",
+                              "textAlign": "left",
+                              "width": "60px",
+                            }
+                          }
+                        >
+                          <div
+                            className="sortable-column"
+                          >
+                            Business Case Received Date
+                            <span
+                              style={
+                                Object {
+                                  "flex": "1 1 auto",
+                                }
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div
+                          className="th"
+                          colSpan={1}
+                          role="columnheader"
+                          style={
+                            Object {
+                              "alignItems": "center",
+                              "boxSizing": "border-box",
+                              "display": "flex",
+                              "flex": "100 0 auto",
+                              "justifyContent": "flex-start",
+                              "minWidth": "30px",
+                              "textAlign": "left",
+                              "width": "100px",
+                            }
+                          }
+                        >
+                          <div
+                            className="sortable-column"
+                          >
+                            Note
+                            <span
+                              style={
+                                Object {
+                                  "flex": "1 1 auto",
+                                }
+                              }
+                            />
+                          </div>
+                        </div>
+                        <div
+                          className="th"
+                          colSpan={1}
+                          role="columnheader"
+                          style={
+                            Object {
+                              "alignItems": "center",
+                              "boxSizing": "border-box",
+                              "display": "flex",
+                              "flex": "80 0 auto",
+                              "justifyContent": "flex-start",
+                              "minWidth": "30px",
+                              "textAlign": "left",
+                              "width": "80px",
+                            }
+                          }
+                        >
+                          <div
+                            className="sortable-column"
+                          >
+                            Response
+                            <span
+                              style={
+                                Object {
+                                  "flex": "1 1 auto",
+                                }
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className="no-rows-message"
+                    >
+                      No rows to display
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="EnhancedReferralCompleteForm container-fluid"
+        >
+          <h3>
+            Enhanced Referral Process Complete
+          </h3>
+          <div
+            className="form-row"
+          >
+            <label
+              className="form-label col-form-label col-md-4"
+            >
+              Interest Received On
+            </label>
+            <div
+              className="col-md-2 form-group"
+            >
+              <div
+                className="react-datepicker-wrapper"
+              >
+                <div
+                  className="react-datepicker__input-container"
+                >
+                  <input
+                    autoComplete="off"
+                    className="form-control date-picker"
+                    disabled={true}
+                    id="datepicker-interestedReceivedOn"
+                    name="interestedReceivedOn"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="--/--/----"
+                    readOnly={false}
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="form-row"
+          >
+            <div
+              className="col"
+            >
+              <div
+                className="ProjectNotes form-row"
+              >
+                <div
+                  className="col form-group col"
+                >
+                  <label
+                    className="form-label"
+                    htmlFor="input-interestFromEnhancedReferralNote"
+                  >
+                    Interest Note
+                  </label>
+                  <textarea
+                    className="col-md-5 form-control"
+                    disabled={true}
+                    id="input-interestFromEnhancedReferralNote"
+                    name="interestFromEnhancedReferralNote"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onFocus={[Function]}
+                    onMouseOut={[Function]}
+                    onMouseOver={[Function]}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="form-row"
+          >
+            <label
+              className="form-label col-form-label col-md-4"
+            >
+              On Hold Notification Sent
+               
+              <svg
+                className="tooltip-icon"
+                fill="currentColor"
+                height="1em"
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseOut={[Function]}
+                onMouseOver={[Function]}
+                stroke="currentColor"
+                strokeWidth="0"
+                style={
+                  Object {
+                    "color": undefined,
+                  }
+                }
+                viewBox="0 0 512 512"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
+                />
+              </svg>
+            </label>
+            <div
+              className="col-md-2 form-group"
+            >
+              <div
+                className="react-datepicker-wrapper"
+              >
+                <div
+                  className="react-datepicker__input-container"
+                >
+                  <input
+                    autoComplete="off"
+                    className="form-control date-picker"
+                    disabled={true}
+                    id="datepicker-onHoldNotificationSentOn"
+                    name="onHoldNotificationSentOn"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="--/--/----"
+                    readOnly={false}
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              className="col-md-6"
+            >
+              <button
+                className="btn btn-primary"
+                disabled={true}
+                onClick={[Function]}
+                type="button"
+              >
+                Place Project On Hold
+              </button>
+            </div>
+          </div>
+          <div
+            className="form-row"
+          >
+            <label
+              className="form-label col-form-label col-md-4"
+            >
+              Date Transferred within the GRE
+              <svg
+                className="tooltip-icon"
+                fill="currentColor"
+                height="1em"
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseOut={[Function]}
+                onMouseOver={[Function]}
+                stroke="currentColor"
+                strokeWidth="0"
+                style={
+                  Object {
+                    "color": undefined,
+                  }
+                }
+                viewBox="0 0 512 512"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
+                />
+              </svg>
+            </label>
+            <div
+              className="col-md-2 form-group"
+            >
+              <div
+                className="react-datepicker-wrapper"
+              >
+                <div
+                  className="react-datepicker__input-container"
+                >
+                  <input
+                    autoComplete="off"
+                    className="form-control date-picker"
+                    disabled={true}
+                    id="datepicker-transferredWithinGreOn"
+                    name="transferredWithinGreOn"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="--/--/----"
+                    readOnly={false}
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              className="col-md-6"
+            >
+              <button
+                className="btn btn-primary"
+                disabled={true}
+                onClick={[Function]}
+                type="button"
+              >
+                Update Property Information
+              </button>
+            </div>
+          </div>
+          <div
+            className="c3"
+          >
+            OR
+          </div>
+          <div
+            className="form-row"
+          >
+            <label
+              className="form-label col-form-label col-md-4"
+            >
+              Clearance Notification Sent
+              <svg
+                className="tooltip-icon"
+                fill="currentColor"
+                height="1em"
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseOut={[Function]}
+                onMouseOver={[Function]}
+                stroke="currentColor"
+                strokeWidth="0"
+                style={
+                  Object {
+                    "color": undefined,
+                  }
+                }
+                viewBox="0 0 512 512"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
+                />
+              </svg>
+            </label>
+            <div
+              className="col-md-2 form-group"
+            >
+              <div
+                className="react-datepicker-wrapper"
+              >
+                <div
+                  className="react-datepicker__input-container"
+                >
+                  <input
+                    autoComplete="off"
+                    className="form-control date-picker"
+                    disabled={true}
+                    id="datepicker-clearanceNotificationSentOn"
+                    name="clearanceNotificationSentOn"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="--/--/----"
+                    readOnly={false}
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="form-row"
+          >
+            <label
+              className="form-label col-form-label col-md-4"
+            >
+              Request for SPL Received On
+              <svg
+                className="tooltip-icon"
+                fill="currentColor"
+                height="1em"
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseOut={[Function]}
+                onMouseOver={[Function]}
+                stroke="currentColor"
+                strokeWidth="0"
+                style={
+                  Object {
+                    "color": undefined,
+                  }
+                }
+                viewBox="0 0 512 512"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
+                />
+              </svg>
+            </label>
+            <div
+              className="col-md-2 form-group"
+            >
+              <div
+                className="react-datepicker-wrapper"
+              >
+                <div
+                  className="react-datepicker__input-container"
+                >
+                  <input
+                    autoComplete="off"
+                    className="form-control date-picker"
+                    disabled={true}
+                    id="datepicker-requestForSplReceivedOn"
+                    name="requestForSplReceivedOn"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="--/--/----"
+                    readOnly={false}
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="form-row"
+          >
+            <label
+              className="form-label col-form-label col-md-4"
+            >
+              SPL Addition Approved On
+              <svg
+                className="tooltip-icon"
+                fill="currentColor"
+                height="1em"
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseOut={[Function]}
+                onMouseOver={[Function]}
+                stroke="currentColor"
+                strokeWidth="0"
+                style={
+                  Object {
+                    "color": undefined,
+                  }
+                }
+                viewBox="0 0 512 512"
+                width="1em"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
+                />
+              </svg>
+            </label>
+            <div
+              className="col-md-2 form-group"
+            >
+              <div
+                className="react-datepicker-wrapper"
+              >
+                <div
+                  className="react-datepicker__input-container"
+                >
+                  <input
+                    autoComplete="off"
+                    className="form-control date-picker"
+                    disabled={true}
+                    id="datepicker-approvedForSplOn"
+                    name="approvedForSplOn"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="--/--/----"
+                    readOnly={false}
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+            <div
+              className="col-md-6"
+              style={
+                Object {
+                  "display": "flex",
+                }
+              }
+            >
+              <button
+                className="btn btn-primary"
+                disabled={true}
+                onClick={[Function]}
+                type="button"
+              >
+                Proceed to SPL
+              </button>
+              <div
+                className="c3"
+              >
+                OR
+              </div>
+              <button
+                className="btn btn-primary"
+                disabled={true}
+                onClick={[Function]}
+                type="button"
+              >
+                Not Included in the SPL
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      style={
+        Object {
+          "textAlign": "right",
+        }
+      }
+    />
+  </form>
+</div>
+`;
