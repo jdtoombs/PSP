@@ -8,7 +8,7 @@ parameters:
     displayName: "Openshift Project Name"
     description: "Openshift Project Name"
     required: true
-    value: "354028-tools"
+    value: "3cd915-tools"
   - name: ENV_NAME
     displayName: "Environment name"
     description: "The name for the environment"
@@ -18,7 +18,7 @@ parameters:
     displayName: "Environment namespace"
     description: "The namespace for the environment"
     required: true
-    value: "354028"
+    value: "3cd915"
   - name: DOMAIN
     displayName: "Openshift app domain"
     description: "Openshift app domain"
@@ -45,7 +45,7 @@ objects:
           targetPort: 50000
       selector:
         name: ${APP_NAME}
-      clusterIP: 10.98.49.99
+      clusterIP: 10.98.82.99
       type: ClusterIP
       sessionAffinity: None
     status:
@@ -68,10 +68,10 @@ objects:
           protocol: TCP
           port: 80
           targetPort: 8080
-          nodePort: 32103
+          nodePort: 32122
       selector:
         name: ${APP_NAME}
-      clusterIP: 10.98.140.237
+      clusterIP: 10.98.150.237
       type: NodePort
       sessionAffinity: None
       externalTrafficPolicy: Cluster
@@ -151,10 +151,10 @@ objects:
           protocol: TCP
           port: 80
           targetPort: 8080
-          nodePort: 32103
+          nodePort: 32108
       selector:
         name: ${APP_NAME}
-      clusterIP: 10.98.140.237
+      clusterIP: 
       type: NodePort
       sessionAffinity: None
       externalTrafficPolicy: Cluster
