@@ -40,7 +40,7 @@ parameters:
   - name: APP_DOMAIN
     displayName: "Application Hostname"
     description: "The exposed hostname that will route to the the .NET Core service, if left blank a value will be defaulted."
-    value: ""
+    value: "pims-app-3cd915-dev.apps.silver.devops.gov.bc.ca"
   - name: APP_PORT
     displayName: "Application Port"
     description: "The port used to communicate with the Pod"
@@ -477,30 +477,4 @@ objects:
                     secretKeyRef:
                       name: ${APP_NAME}-${ROLE_NAME}-elasticsearch${INSTANCE}
                       key: ELASTIC_PASSWORD
-              resources:
-                requests:
-                  cpu: ${CPU_REQUEST}
-                  memory: ${MEMORY_REQUEST}
-                limits:
-                  cpu: ${CPU_LIMIT}
-                  memory: ${MEMORY_LIMIT}
-              readinessProbe:
-                failureThreshold: 3
-                httpGet:
-                  path: ${READINESS_PATH}
-                  port: ${{APP_PORT}}
-                  scheme: ${HEALTH_SCHEME}
-                initialDelaySeconds: 1
-                periodSeconds: 10
-                successThreshold: 1
-                timeoutSeconds: 3
-              livenessProbe:
-                failureThreshold: 3
-                httpGet:
-                  path: ${LIVENESS_PATH}
-                  port: ${{APP_PORT}}
-                  scheme: ${HEALTH_SCHEME}
-                initialDelaySeconds: 1
-                periodSeconds: 10
-                successThreshold: 1
-                timeoutSeconds: 3
+              
