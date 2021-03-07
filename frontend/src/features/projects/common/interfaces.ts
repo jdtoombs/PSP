@@ -33,18 +33,18 @@ export interface IProperty {
   postal: string;
 
   // Financial Values
-  market: number;
+  market: number | '';
   marketFiscalYear?: number;
   marketRowVersion?: string;
-  netBook: number;
+  netBook: number | '';
   netBookFiscalYear?: number;
   netBookRowVersion?: string;
 
-  assessedLand?: number;
+  assessedLand?: number | '';
   assessedLandDate?: Date | string;
   assessedLandFirm?: string;
   assessedLandRowVersion?: string;
-  assessedBuilding?: number;
+  assessedBuilding?: number | '';
   assessedBuildingDate?: Date | string;
   assessedBuildingFirm?: string;
   assessedBuildingRowVersion?: string;
@@ -54,6 +54,7 @@ export interface IProperty {
   landLegalDescription: string;
   zoning?: string;
   zoningPotential?: string;
+  parcels?: IParentParcel[];
 
   // Building Properties
   parcelId?: number;
@@ -70,6 +71,12 @@ export interface IProperty {
   transferLeaseOnSale?: boolean;
   rentableArea?: number;
   rowVersion?: string;
+}
+
+export interface IParentParcel {
+  pid: string;
+  pin: number;
+  id: number;
 }
 
 /**
@@ -406,6 +413,7 @@ export interface IApiProperty {
   id: number;
   parcelId?: number;
   buildingId?: number;
+  propertyTypeId: number;
   pid?: string;
   pin?: number | '';
   projectNumbers: string[];
@@ -428,6 +436,7 @@ export interface IApiProperty {
   evaluations: IEvaluation[];
   fiscals: IFiscal[];
   rowVersion?: string;
+  parcels?: IParentParcel[];
 }
 
 export enum AgencyResponses {

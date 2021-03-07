@@ -3,7 +3,7 @@ import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Container, Button } from 'react-bootstrap';
 import queryString from 'query-string';
-import { isEmpty } from 'lodash';
+import { fill, isEmpty, pick, range } from 'lodash';
 import * as API from 'constants/API';
 import { ENVIRONMENT } from 'constants/environment';
 import { decimalOrUndefined, mapLookupCode } from 'utils';
@@ -25,14 +25,8 @@ import { IPropertyFilter } from '../filter/IPropertyFilter';
 import { SortDirection, TableSort } from 'components/Table/TableSort';
 import { useRouterFilter } from 'hooks/useRouterFilter';
 import { Form, Formik, FormikProps, getIn, useFormikContext } from 'formik';
-import {
-  getCurrentFiscal,
-  getMostRecentEvaluation,
-  toApiProperty,
-} from 'features/projects/common/projectConverter';
 import { useApi } from 'hooks/useApi';
 import { toast } from 'react-toastify';
-import { IApiProperty } from 'features/projects/common';
 import { EvaluationKeys } from 'constants/evaluationKeys';
 import { FiscalKeys } from 'constants/fiscalKeys';
 import variables from '_variables.module.scss';
@@ -40,6 +34,13 @@ import useKeycloakWrapper from 'hooks/useKeycloakWrapper';
 import { Roles } from 'constants/roles';
 import useCodeLookups from 'hooks/useLookupCodes';
 import useDeepCompareEffect from 'hooks/useDeepCompareEffect';
+import * as Yup from 'yup';
+import {
+  getCurrentYearEvaluation,
+  getCurrentFiscal,
+  toApiProperty,
+} from 'features/projects/common/projectConverter';
+import { IApiProperty } from 'features/projects/common';
 
 const getPropertyReportUrl = (filter: IPropertyQueryParams) =>
   `${ENVIRONMENT.apiUrl}/reports/properties?${filter ? queryString.stringify(filter) : ''}`;
@@ -89,13 +90,14 @@ const defaultFilterValues: IPropertyFilter = {
   maxAssessedValue: '',
   maxNetBookValue: '',
   maxMarketValue: '',
+  surplusFilter: false,
 };
 
 export const flattenProperty = (apiProperty: IApiProperty): IProperty => {
-  const assessedLand = getMostRecentEvaluation(apiProperty.evaluations, EvaluationKeys.Assessed);
+  const assessedLand = getCurrentYearEvaluation(apiProperty.evaluations, EvaluationKeys.Assessed);
   const assessedBuilding = apiProperty.parcelId
-    ? getMostRecentEvaluation(apiProperty.evaluations, EvaluationKeys.Improvements)
-    : getMostRecentEvaluation(apiProperty.evaluations, EvaluationKeys.Assessed);
+    ? getCurrentYearEvaluation(apiProperty.evaluations, EvaluationKeys.Improvements)
+    : getCurrentYearEvaluation(apiProperty.evaluations, EvaluationKeys.Assessed);
   const netBook = getCurrentFiscal(apiProperty.fiscals, FiscalKeys.NetBook);
   const market = getCurrentFiscal(apiProperty.fiscals, FiscalKeys.Market);
   const property: any = {
@@ -159,11 +161,17 @@ const getServerQuery = (state: {
       administrativeArea,
       projectNumber,
       classificationId,
+      inSurplusPropertyProgram,
+      inEnhancedReferralProcess,
+      bareLandOnly,
       name,
       agencies,
       minLotSize,
       maxLotSize,
       propertyType,
+      maxAssessedValue,
+      maxMarketValue,
+      maxNetBookValue,
     },
   } = state;
 
@@ -186,10 +194,16 @@ const getServerQuery = (state: {
     agencies: parsedAgencies,
     minLandArea: decimalOrUndefined(minLotSize),
     maxLandArea: decimalOrUndefined(maxLotSize),
+    inSurplusPropertyProgram: inSurplusPropertyProgram,
+    inEnhancedReferralProcess: inEnhancedReferralProcess,
+    bareLandOnly: bareLandOnly,
     page: pageIndex + 1,
     quantity: pageSize,
     propertyType: propertyType,
     name: name,
+    maxAssessedValue,
+    maxMarketValue,
+    maxNetBookValue,
   };
   return query;
 };
@@ -240,10 +254,9 @@ const PropertyListView: React.FC = () => {
   const agenciesList = agencies.filter(a => !a.parentId).map(mapLookupCode);
   const subAgencies = agencies.filter(a => !!a.parentId).map(mapLookupCode);
 
-  const propertyClassifications = useMemo(
-    () => lookupCodes.getByType(API.PROPERTY_CLASSIFICATION_CODE_SET_NAME),
-    [lookupCodes],
-  );
+  const propertyClassifications = useMemo(() => lookupCodes.getPropertyClassificationOptions(), [
+    lookupCodes,
+  ]);
   const administrativeAreas = useMemo(
     () => lookupCodes.getByType(API.AMINISTRATIVE_AREA_CODE_SET_NAME),
     [lookupCodes],
@@ -291,15 +304,20 @@ const PropertyListView: React.FC = () => {
     return data;
   }, [filter]);
 
-  useRouterFilter({ filter: parsedFilter, setFilter: null, key: 'propertyFilter' });
+  const { updateSearch } = useRouterFilter({
+    filter: parsedFilter,
+    setFilter: setFilter,
+    key: 'propertyFilter',
+  });
 
   // Update internal state whenever the filter bar state changes
   const handleFilterChange = useCallback(
     async (value: IPropertyFilter) => {
       setFilter({ ...value });
+      updateSearch({ ...value });
       setPageIndex(0); // Go to first page of results when filter changes
     },
-    [setFilter, setPageIndex],
+    [setFilter, setPageIndex, updateSearch],
   );
   // This will get called when the table needs new data
   const handleRequestData = useCallback(
@@ -421,7 +439,6 @@ const PropertyListView: React.FC = () => {
           <PropertyFilter
             defaultFilter={defaultFilterValues}
             agencyLookupCodes={agencies}
-            propertyClassifications={propertyClassifications}
             adminAreaLookupCodes={administrativeAreas}
             onChange={handleFilterChange}
             sort={sorting}
@@ -485,113 +502,182 @@ const PropertyListView: React.FC = () => {
           )}
           <VerticalDivider />
 
-          <TooltipWrapper toolTipId="edit-financial-values" toolTip={'Edit financial values'}>
-            <EditIconButton>
-              <FaEdit data-testid="edit-icon" size={36} onClick={() => setEditable(!editable)} />
-            </EditIconButton>
-          </TooltipWrapper>
-          {editable && (
-            <TooltipWrapper
-              toolTipId="save-edited-financial-values"
-              toolTip={'Save financial values'}
-            >
-              <Button
-                data-testid="save-changes"
-                disabled={dirtyRows.length === 0}
-                onClick={() => {
-                  if (tableFormRef.current?.dirty) {
-                    tableFormRef.current.submitForm();
-                  }
-                }}
-              >
-                Save edits
-              </Button>
+          {!editable && (
+            <TooltipWrapper toolTipId="edit-financial-values" toolTip={'Edit financial values'}>
+              <EditIconButton>
+                <FaEdit data-testid="edit-icon" size={36} onClick={() => setEditable(!editable)} />
+              </EditIconButton>
             </TooltipWrapper>
           )}
+          {editable && (
+            <>
+              <TooltipWrapper toolTipId="cancel-edited-financial-values" toolTip={'Cancel edits'}>
+                <Button
+                  data-testid="cancel-changes"
+                  variant="outline-primary"
+                  style={{ marginRight: 10 }}
+                  onClick={() => {
+                    if (tableFormRef.current?.dirty) {
+                      tableFormRef.current.resetForm();
+                    }
+                    setEditable(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </TooltipWrapper>
+              <TooltipWrapper
+                toolTipId="save-edited-financial-values"
+                toolTip={'Save financial values'}
+              >
+                <Button
+                  data-testid="save-changes"
+                  onClick={() => {
+                    if (tableFormRef.current?.dirty && dirtyRows.length > 0) {
+                      tableFormRef.current.submitForm();
+                    }
+                  }}
+                >
+                  Save edits
+                </Button>
+              </TooltipWrapper>
+            </>
+          )}
         </Container>
-        <Formik
-          innerRef={tableFormRef as any}
-          initialValues={{ properties: data || [] }}
-          enableReinitialize
-          onSubmit={async values => {
-            let nextProperties = [...values.properties];
-            const changedRows = dirtyRows.map(change => {
-              const data = { ...values.properties![change.rowId] };
 
-              return { rowId: change.rowId, data } as any;
-            });
-            if (changedRows.length > 0) {
-              for (const change of changedRows) {
-                const apiProperty = toApiProperty(change.data as any, true);
-                const callApi = apiProperty.parcelId ? updateParcel : updateBuilding;
-                const response: any = await callApi(apiProperty.id, apiProperty);
-                nextProperties = nextProperties.map((item, index: number) => {
-                  if (index === change.rowId) {
-                    item = {
-                      ...item,
-                      ...flattenProperty(response),
-                    } as any;
-                  }
-                  return item;
-                });
-              }
-
-              toast.info('Successfully saved changes!!');
-              setDirtyRows([]);
-              setData(nextProperties);
+        <Table<IProperty>
+          name="propertiesTable"
+          lockPageSize={true}
+          columns={columns}
+          data={data || []}
+          loading={data === undefined}
+          filterable
+          sort={sorting}
+          pageIndex={pageIndex}
+          onRequestData={handleRequestData}
+          pageCount={pageCount}
+          onSortChange={(column: string, direction: SortDirection) => {
+            if (!!direction) {
+              setSorting({ ...sorting, [column]: direction });
+            } else {
+              const data: any = { ...sorting };
+              delete data[column];
+              setSorting(data);
             }
           }}
-        >
-          <Form>
-            <DirtyRowsTracker setDirtyRows={setDirtyRows} />
-            <Table<IProperty>
-              name="propertiesTable"
-              lockPageSize={true}
-              columns={columns}
-              data={data || []}
-              loading={data === undefined}
-              filterable
-              sort={sorting}
-              pageIndex={pageIndex}
-              onRequestData={handleRequestData}
-              pageCount={pageCount}
-              onSortChange={(column: string, direction: SortDirection) => {
-                if (!!direction) {
-                  setSorting({ ...sorting, [column]: direction });
-                } else {
-                  const data: any = { ...sorting };
-                  delete data[column];
-                  setSorting(data);
-                }
-              }}
-              canRowExpand={(val: any) => {
-                if (val.values.propertyTypeId === 0) {
-                  return true;
-                } else {
-                  return false;
-                }
-              }}
-              detailsPanel={{
-                render: val => {
-                  if (expandData[val.id]) {
-                    return <Buildings hideHeaders={true} data={expandData[val.id]} />;
+          canRowExpand={(val: any) => {
+            if (val.values.propertyTypeId === 0) {
+              return true;
+            } else {
+              return false;
+            }
+          }}
+          detailsPanel={{
+            render: val => {
+              if (expandData[val.id]) {
+                return <Buildings hideHeaders={true} data={expandData[val.id]} />;
+              }
+            },
+            icons: {
+              open: <FaFolderOpen color="black" size={20} />,
+              closed: <FaFolder color="black" size={20} />,
+            },
+            checkExpanded: (row, state) => !!state.find(x => checkExpanded(x, row)),
+            onExpand: loadBuildings,
+            getRowId: row => row.id,
+          }}
+          filter={appliedFilter}
+          onFilterChange={values => {
+            setFilter({ ...filter, ...values });
+          }}
+          renderBodyComponent={({ body }) => (
+            <Formik
+              innerRef={tableFormRef as any}
+              initialValues={{ properties: data || [] }}
+              validationSchema={Yup.object().shape({
+                properties: Yup.array().of(
+                  Yup.object().shape({
+                    assessedLand: Yup.number()
+                      .min(0, 'Minimum value is $0')
+                      .max(1000000000, 'Maximum value is $1,000,000,000')
+                      .required('Required'),
+                    market: Yup.number()
+                      .min(0, 'Minimum value is $0')
+                      .max(1000000000, 'Maximum value is $1,000,000,000')
+                      .required('Required'),
+                    netBook: Yup.number()
+                      .min(0, 'Minimum value is $0')
+                      .max(1000000000, 'Maximum value is $1,000,000,000')
+                      .required('Required'),
+                  }),
+                ),
+              })}
+              enableReinitialize
+              onSubmit={async (values, actions) => {
+                let nextProperties = [...values.properties];
+                const changedRows = dirtyRows.map(change => {
+                  const data = { ...values.properties![change.rowId] };
+                  return { data, ...change } as any;
+                });
+                let errors: any[] = fill(range(nextProperties.length), undefined);
+                let touched: any[] = fill(range(nextProperties.length), undefined);
+                if (changedRows.length > 0) {
+                  for (const change of changedRows) {
+                    const apiProperty = toApiProperty(change.data as any, true);
+                    const callApi = apiProperty.parcelId ? updateParcel : updateBuilding;
+                    try {
+                      const response: any = await callApi(apiProperty.id, apiProperty);
+                      nextProperties = nextProperties.map((item, index: number) => {
+                        if (index === change.rowId) {
+                          item = {
+                            ...item,
+                            ...flattenProperty(response),
+                          } as any;
+                        }
+                        return item;
+                      });
+
+                      toast.info(
+                        `Successfully saved changes for ${apiProperty.name ||
+                          apiProperty.address?.line1}`,
+                      );
+                    } catch (error) {
+                      const errorMessage = (error as Error).message;
+
+                      touched[change.rowId] = pick(change, ['assessedLand', 'netBook', 'market']);
+                      toast.error(
+                        `Failed to save changes for ${apiProperty.name ||
+                          apiProperty.address?.line1}. ${errorMessage}`,
+                      );
+                      errors[change.rowId] = {
+                        assessedLand:
+                          change.assessedland && (errorMessage || 'Save request failed.'),
+                        netBook: change.netBook && (errorMessage || 'Save request failed.'),
+                        market: change.market && (errorMessage || 'Save request failed.'),
+                      };
+                    }
                   }
-                },
-                icons: {
-                  open: <FaFolderOpen color="black" size={20} />,
-                  closed: <FaFolder color="black" size={20} />,
-                },
-                checkExpanded: (row, state) => !!state.find(x => checkExpanded(x, row)),
-                onExpand: loadBuildings,
-                getRowId: row => row.id,
+
+                  setDirtyRows([]);
+                  if (!errors.find(x => !!x)) {
+                    setData(nextProperties);
+                  } else {
+                    actions.resetForm({
+                      values: { properties: nextProperties },
+                      errors: { properties: errors },
+                      touched: { properties: touched },
+                    });
+                  }
+                }
               }}
-              filter={appliedFilter}
-              onFilterChange={values => {
-                setFilter({ ...filter, ...values });
-              }}
-            />
-          </Form>
-        </Formik>
+            >
+              <Form>
+                <DirtyRowsTracker setDirtyRows={setDirtyRows} />
+                {body}
+              </Form>
+            </Formik>
+          )}
+        />
       </div>
     </Container>
   );

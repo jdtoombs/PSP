@@ -10,6 +10,11 @@ import styled from 'styled-components';
 import { ThreeColumnItem } from './ThreeColumnItem';
 import variables from '_variables.module.scss';
 import { PropertyTypes } from 'constants/propertyTypes';
+import useCodeLookups from 'hooks/useLookupCodes';
+import { useState } from 'react';
+import { ProjectNumberLink } from './ProjectNumberLink';
+import { BuildingSvg, LandSvg, SubdivisionSvg } from 'components/common/Icons';
+import { Workflows } from 'constants/workflows';
 
 /**
  * Compare two dates to evaluation which is earlier.
@@ -54,14 +59,58 @@ const ContactSres = styled(Row)`
   }
 `;
 
+const ProjectStatus = styled.div`
+  background-color: #fff1cc;
+  text-align: center;
+  color: ${variables.textColor};
+  font-family: 'BCSans', Fallback, sans-serif;
+  padding: 5px;
+
+  p {
+    margin-bottom: 0;
+  }
+`;
+
 const getHeading = (propertyTypeId: PropertyTypes | null) => {
   switch (propertyTypeId) {
     case PropertyTypes.SUBDIVISION:
-      return 'Potential Subdivision';
+      return (
+        <Label className="header">
+          <SubdivisionSvg className="svg" style={{ height: 25, width: 25, marginRight: 5 }} />
+          Potential Subdivision
+        </Label>
+      );
     case PropertyTypes.BUILDING:
-      return 'Building Identification';
+      return (
+        <Label className="header">
+          <BuildingSvg className="svg" style={{ height: 25, width: 25, marginRight: 5 }} />
+          Building Identification
+        </Label>
+      );
     default:
-      return 'Parcel Identification';
+      return (
+        <Label className="header">
+          <LandSvg className="svg" style={{ height: 25, width: 25, marginRight: 5 }} />
+          Parcel Identification
+        </Label>
+      );
+  }
+};
+
+const displayProjectStatus = (workflowCode: string) => {
+  switch (workflowCode) {
+    case Workflows.ERP:
+      return 'Property is in Enhanced Referral Process';
+    case Workflows.SPL:
+      return 'Property is on the Surplus Properties List';
+    case Workflows.ASSESS_EX_DISPOSAL:
+      return 'Property has been approved for ERP exemption';
+    case Workflows.ASSESS_EXEMPTION:
+      return 'Property has been submitted to be exempt from ERP';
+    case Workflows.SUBMIT_DISPOSAL:
+      return 'Property is in a draft project';
+    default:
+      return 'Project is in Surplus Property Program';
   }
 };
 
@@ -77,13 +126,18 @@ export const InfoContent: React.FC<IInfoContent> = ({
   propertyTypeId,
   canViewDetails,
 }) => {
+  const isParcel =
+    propertyTypeId !== null &&
+    [PropertyTypes.PARCEL, PropertyTypes.SUBDIVISION].includes(propertyTypeId);
+
+  const lookupCodes = useCodeLookups();
+  const [privateProject, setPrivateProject] = useState<boolean>(false);
+
   return (
     <>
       <ListGroup>
-        <Label className="header">{getHeading(propertyTypeId)}</Label>
-        {propertyTypeId === PropertyTypes.PARCEL && (
-          <ParcelPIDPIN parcelInfo={propertyInfo as IParcel} />
-        )}
+        {getHeading(propertyTypeId)}
+        {isParcel && <ParcelPIDPIN parcelInfo={propertyInfo as IParcel} />}
         <OuterRow>
           {canViewDetails && (
             <>
@@ -94,17 +148,17 @@ export const InfoContent: React.FC<IInfoContent> = ({
                 <>
                   <ThreeColumnItem
                     leftSideLabel={'Ministry'}
-                    rightSideItem={propertyInfo?.agency}
+                    rightSideItem={lookupCodes.getAgencyFullName(propertyInfo?.agency)}
                   />
                   <ThreeColumnItem
                     leftSideLabel={'Owning agency'}
-                    rightSideItem={propertyInfo.subAgency}
+                    rightSideItem={lookupCodes.getAgencyFullName(propertyInfo.subAgency)}
                   />
                 </>
               ) : (
                 <ThreeColumnItem
                   leftSideLabel={'Owning ministry'}
-                  rightSideItem={propertyInfo?.agency}
+                  rightSideItem={lookupCodes.getAgencyFullName(propertyInfo?.agency)}
                 />
               )}
             </>
@@ -113,8 +167,23 @@ export const InfoContent: React.FC<IInfoContent> = ({
             leftSideLabel={'Classification'}
             rightSideItem={propertyInfo?.classification}
           />
+          {!!propertyInfo?.projectNumbers?.length && (
+            <ThreeColumnItem
+              leftSideLabel={`Project Number${propertyInfo.projectNumbers.length > 1 ? 's' : ''}`}
+              rightSideItem={propertyInfo.projectNumbers.map((projectNum: string) => (
+                <ProjectNumberLink
+                  key={projectNum}
+                  setPrivateProject={setPrivateProject}
+                  privateProject={privateProject}
+                  agencyId={propertyInfo.agencyId}
+                  projectNumber={projectNum}
+                  breakLine
+                />
+              ))}
+            />
+          )}
         </OuterRow>
-        {!canViewDetails && (
+        {(!canViewDetails || privateProject) && (
           <ContactSres>
             <em>
               For more information on this property, contact{' '}
@@ -125,6 +194,18 @@ export const InfoContent: React.FC<IInfoContent> = ({
           </ContactSres>
         )}
       </ListGroup>
+      {propertyInfo?.projectWorkflow && (
+        <ListGroup>
+          <ProjectStatus>
+            <em>{displayProjectStatus(propertyInfo?.projectWorkflow)}</em>
+            {canViewDetails && (
+              <p>
+                Status: <strong>{propertyInfo?.projectStatus}</strong>
+              </p>
+            )}
+          </ProjectStatus>
+        </ListGroup>
+      )}
       <ListGroup>
         <Label className="header">Location data</Label>
         <OuterRow>
@@ -142,7 +223,7 @@ export const InfoContent: React.FC<IInfoContent> = ({
           <ThreeColumnItem leftSideLabel={'Longitude'} rightSideItem={propertyInfo?.longitude} />
         </OuterRow>
       </ListGroup>
-      {propertyTypeId === PropertyTypes.PARCEL && (
+      {isParcel && (
         <ParcelAttributes parcelInfo={propertyInfo as IParcel} canViewDetails={canViewDetails} />
       )}
       {propertyTypeId === PropertyTypes.BUILDING && (

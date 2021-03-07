@@ -27,6 +27,8 @@ import { indexOfFinancial } from 'features/properties/components/forms/subforms/
 import { EvaluationKeys } from 'constants/evaluationKeys';
 import { FiscalKeys } from 'constants/fiscalKeys';
 import moment from 'moment';
+import { ProjectNumberLink } from 'components/maps/leaflet/InfoSlideOut/ProjectNumberLink';
+import { IBuilding } from 'actions/parcelsActions';
 
 interface IReviewProps {
   nameSpace?: string;
@@ -40,12 +42,9 @@ interface IReviewProps {
   isPropertyAdmin: boolean;
 }
 
-const LinkButton = styled.span`
-  background: none;
-  border: none;
-  padding: 0;
-  color: #069;
-  text-decoration: underline;
+const StyledProjectNumbers = styled.div`
+  flex-direction: column;
+  display: flex;
 `;
 
 export const LandReviewPage: React.FC<any> = (props: IReviewProps) => {
@@ -56,6 +55,10 @@ export const LandReviewPage: React.FC<any> = (props: IReviewProps) => {
     [props.nameSpace],
   );
   const formikProps = useFormikContext();
+
+  const onRowClick = (data: IBuilding) => {
+    window.open(`/mapview?sidebar=true&buildingId=${data.id}`, `_blank`);
+  };
 
   const defaultEditValues = useMemo(
     () => ({
@@ -75,7 +78,10 @@ export const LandReviewPage: React.FC<any> = (props: IReviewProps) => {
       +c.value === +classId,
   );
 
-  const projectNumber = getIn(formikProps.values, withNameSpace('projectNumber'));
+  const projectNumbers = getIn(formikProps.values, withNameSpace('projectNumbers'));
+  const agencyId = getIn(formikProps.values, withNameSpace('agencyId'));
+  const [privateProject, setPrivateProject] = useState(false);
+
   const currentYear = moment().year();
   const evaluationIndex = indexOfFinancial(
     getIn(formikProps.values, withNameSpace('evaluations')),
@@ -210,14 +216,20 @@ export const LandReviewPage: React.FC<any> = (props: IReviewProps) => {
                   field={withNameSpace('longitude')}
                 />
               </Row>
-              {!!projectNumber && (
-                <Row className="content-item">
-                  <Label>SPP</Label>
-                  <LinkButton>
-                    {
-                      projectNumber //TODO: make this a proper link when PA-1974 is fixed
-                    }
-                  </LinkButton>
+              {!!projectNumbers?.length && (
+                <Row style={{ marginTop: '1rem' }}>
+                  <Label>Project Number(s)</Label>
+                  <StyledProjectNumbers>
+                    {projectNumbers.map((projectNum: string) => (
+                      <ProjectNumberLink
+                        projectNumber={projectNum}
+                        key={projectNum}
+                        agencyId={agencyId}
+                        setPrivateProject={setPrivateProject}
+                        privateProject={privateProject}
+                      />
+                    ))}
+                  </StyledProjectNumbers>
                 </Row>
               )}
               <br></br>
@@ -352,6 +364,8 @@ export const LandReviewPage: React.FC<any> = (props: IReviewProps) => {
                     field="data.buildings"
                     name="buildings"
                     columns={getAssociatedBuildingsCols()}
+                    clickableTooltip="Click to view building details"
+                    onRowClick={onRowClick}
                   />
                 </Row>
               </div>

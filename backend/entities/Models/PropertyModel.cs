@@ -58,6 +58,11 @@ namespace Pims.Dal.Entities.Models
         public string ProjectWorkflow { get; set; }
 
         /// <summary>
+        /// get/set - The status code of this project, if in a project.
+        /// </summary>
+        public string ProjectStatus { get; set; }
+
+        /// <summary>
         /// get/set - Whether this property should be fully visible to other agencies (normally during ERP).
         /// </summary>
         /// <value></value>
@@ -195,7 +200,7 @@ namespace Pims.Dal.Entities.Models
                 this.Name = property.Name;
                 this.Description = property.Description;
                 this.IsSensitive = property.IsSensitive;
-                this.AgencyId = property.AgencyId.Value;
+                this.AgencyId = property.AgencyId;
                 this.AgencyCode = property.AgencyCode;
                 this.Agency = property.Agency;
                 this.SubAgencyCode = property.SubAgencyCode;

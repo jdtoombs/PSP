@@ -442,6 +442,38 @@ namespace Pims.Dal.Test.Services
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), It.IsAny<bool>()), Times.Once());
         }
 
+        /// <summary>
+        /// User cannot add project to an agency that they do not belong to.
+        /// </summary>
+        [Fact]
+        public async void AddProject_NotInAgency()
+        {
+            // Arrange
+            var helper = new TestHelper();
+            var user = PrincipalHelper.CreateForPermission(Permissions.ProjectAdd).AddAgency(1);
+
+            var init = helper.InitializeDatabase(user);
+            init.CreateDefaultWorkflowsWithStatus();
+            var agency = init.Agencies.Add(new Agency("CODE2", "Min Code 2")).Entity;
+            init.SaveChanges();
+            var tier = init.TierLevels.Find(1);
+            var status = init.Workflows.Find(1).Status.First();
+            var project = EntityHelper.CreateProject(1, agency, tier, status);
+            project.AgencyId = agency.Id;
+            project.ProjectNumber = "test-generation-override";
+
+            var options = Options.Create(new PimsOptions() { Project = new ProjectOptions() { DraftFormat = "TEST-{0:00000}" } });
+            var service = helper.CreateService<ProjectService>(user, options);
+
+            var queueService = helper.GetService<Mock<IPimsService>>();
+            queueService.Setup(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<bool>()));
+            queueService.Setup(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), It.IsAny<bool>()));
+
+            // Act
+            // Assert
+            await Assert.ThrowsAsync<NotAuthorizedException>(async () => await service.AddAsync(project));
+        }
+
         [Fact]
         public async void Add_Financials()
         {
@@ -1177,7 +1209,7 @@ namespace Pims.Dal.Test.Services
             projectToUpdate.ProjectNumber = project.ProjectNumber;
             projectToUpdate.AddProperty(parcelToUpdate);
             projectToUpdate.Properties.First().Id = project.Properties.First().Id;
-            projectToUpdate.Properties.First().Parcel.ClassificationId = 2;
+            projectToUpdate.Properties.First().Parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             projectToUpdate.Properties.First().Parcel.Evaluations.Add(parcelEvaluationToUpdate);
             await service.UpdateAsync(projectToUpdate);
             var result = service.Get(project.ProjectNumber);
@@ -1186,7 +1218,7 @@ namespace Pims.Dal.Test.Services
             Assert.NotNull(result);
             result.Properties.Should().HaveCount(1);
             result.Properties.First().PropertyType.Should().Be(Entity.PropertyTypes.Land);
-            result.Properties.First().Parcel.ClassificationId.Should().Be(2);
+            result.Properties.First().Parcel.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
             result.Properties.First().Parcel.Evaluations.Should().HaveCount(2);
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
@@ -1305,7 +1337,7 @@ namespace Pims.Dal.Test.Services
             // Act
             var projectToUpdate = service.Get(project.ProjectNumber);
             projectToUpdate.Properties.First().Building.Classification = newClassification;
-            projectToUpdate.Properties.First().Building.ClassificationId = 2;
+            projectToUpdate.Properties.First().Building.ClassificationId = (int)ClassificationTypes.SurplusActive;
             projectToUpdate.Properties.First().Building.Evaluations.Add(parcelEvaluation);
             await service.UpdateAsync(projectToUpdate);
             var result = service.Get(project.ProjectNumber);
@@ -1314,7 +1346,7 @@ namespace Pims.Dal.Test.Services
             Assert.NotNull(result);
             result.Properties.Should().HaveCount(1);
             result.Properties.First().PropertyType.Should().Equals(Entity.PropertyTypes.Building);
-            result.Properties.First().Building.ClassificationId.Should().Equals(2);
+            result.Properties.First().Building.ClassificationId.Should().Equals((int)ClassificationTypes.SurplusActive);
             result.Properties.First().Building.Evaluations.Should().HaveCount(2);
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
@@ -2159,7 +2191,7 @@ namespace Pims.Dal.Test.Services
             EntityHelper.CreateAgency(2);
             parcel.AgencyId = 2;
             EntityHelper.CreatePropertyClassification(2, "new classification");
-            parcel.ClassificationId = 2;
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             project.Properties.First().Parcel = parcel;
 
             // Act
@@ -2173,7 +2205,130 @@ namespace Pims.Dal.Test.Services
             var property = result.Properties.First().Parcel;
             property.ProjectNumbers.Should().Be("[]");
             property.AgencyId.Should().Be(2);
-            property.ClassificationId.Should().Be(2);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
+            queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
+            queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
+        }
+
+        [Fact]
+        public async void SetStatus_TransferredWithinGre_Success_Subdivisions()
+        {
+            // Arrange
+            var helper = new TestHelper();
+            var user = PrincipalHelper.CreateForPermission(Permissions.ProjectView, Permissions.ProjectEdit).AddAgency(1);
+
+            var init = helper.InitializeDatabase(user);
+            var workflows = init.CreateDefaultWorkflowsWithStatus();
+            init.SaveChanges();
+            var project = init.CreateProject(1, 1);
+            init.SetStatus(project, "ERP", "ERP-ON");
+            var parcel = init.CreateParcel(1);
+            parcel.PropertyTypeId = (int)PropertyTypes.Subdivision;
+            var parentParcel = init.CreateParcel(2);
+            parcel.Parcels.Add(new ParcelParcel() { ParcelId = 2, SubdivisionId = 1, Parcel = parentParcel });
+            project.AddProperty(parcel);
+            parcel.UpdateProjectNumbers(project.ProjectNumber);
+            var metadata = new DisposalProjectMetadata()
+            {
+                TransferredWithinGreOn = DateTime.UtcNow
+            };
+            project.Metadata = JsonSerializer.Serialize(metadata);
+            init.SaveChanges();
+
+            var options = ControllerHelper.CreateDefaultPimsOptions();
+            var service = helper.CreateService<ProjectService>(user, options);
+
+            var queueService = helper.GetService<Mock<IPimsService>>();
+            queueService.Setup(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<bool>()));
+            queueService.Setup(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), It.IsAny<bool>()));
+
+            var transferredWithinGre = init.ProjectStatus.First(s => s.Code == "T-GRE");
+            project.StatusId = transferredWithinGre.Id; // Transferred within GRE Status
+
+            EntityHelper.CreateAgency(2);
+            parcel.AgencyId = 2;
+            EntityHelper.CreatePropertyClassification(2, "new classification");
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
+            project.Properties.First().Parcel = parcel;
+
+            // Act
+            var result = await service.SetStatusAsync(project, project.Workflow.Code);
+
+            // Assert
+            Assert.NotNull(result);
+            result.StatusId.Should().Be(transferredWithinGre.Id);
+            result.Status.Should().Be(transferredWithinGre);
+            project.Properties.First().Parcel.PropertyTypeId.Should().Be((int)PropertyTypes.Land);
+            parentParcel.ClassificationId.Should().Be((int)ClassificationTypes.Subdivided);
+            JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).TransferredWithinGreOn.Should().NotBeNull();
+            var property = result.Properties.First().Parcel;
+            property.ProjectNumbers.Should().Be("[]");
+            property.AgencyId.Should().Be(2);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
+            queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
+            queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
+        }
+
+        [Fact]
+        public async void SetStatus_TransferredWithinGre_Success_SubdivisionsParentNotTransferred()
+        {
+            // Arrange
+            var helper = new TestHelper();
+            var user = PrincipalHelper.CreateForPermission(Permissions.ProjectView, Permissions.ProjectEdit).AddAgency(1);
+
+            var init = helper.InitializeDatabase(user);
+            var workflows = init.CreateDefaultWorkflowsWithStatus();
+            init.SaveChanges();
+            var project = init.CreateProject(1, 1);
+            init.SetStatus(project, "ERP", "ERP-ON");
+            var parcel = init.CreateParcel(1);
+            parcel.PropertyTypeId = (int)PropertyTypes.Subdivision;
+            var parentParcel = init.CreateParcel(2);
+            parcel.Parcels.Add(new ParcelParcel() { ParcelId = 2, SubdivisionId = 1, Parcel = parentParcel });
+            project.AddProperty(parcel);
+            project.AddProperty(parentParcel);
+            parcel.UpdateProjectNumbers(project.ProjectNumber);
+            var metadata = new DisposalProjectMetadata()
+            {
+                TransferredWithinGreOn = DateTime.UtcNow
+            };
+            project.Metadata = JsonSerializer.Serialize(metadata);
+            init.SaveChanges();
+
+            var options = ControllerHelper.CreateDefaultPimsOptions();
+            var service = helper.CreateService<ProjectService>(user, options);
+
+            var queueService = helper.GetService<Mock<IPimsService>>();
+            queueService.Setup(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<bool>()));
+            queueService.Setup(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), It.IsAny<bool>()));
+
+            var transferredWithinGre = init.ProjectStatus.First(s => s.Code == "T-GRE");
+            project.StatusId = transferredWithinGre.Id; // Transferred within GRE Status
+
+            EntityHelper.CreateAgency(2);
+            parcel.AgencyId = 2;
+            EntityHelper.CreatePropertyClassification(2, "new classification");
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
+            project.Properties.First().Parcel = parcel;
+
+            // Act
+            var result = await service.SetStatusAsync(project, project.Workflow.Code);
+
+            // Assert
+            Assert.NotNull(result);
+            result.StatusId.Should().Be(transferredWithinGre.Id);
+            result.Status.Should().Be(transferredWithinGre);
+            var transferredSubdivision = result.Properties.FirstOrDefault(p => p.Parcel.AgencyId == 2).Parcel;
+            var nonTransferredParent = result.Properties.FirstOrDefault(p => p.Parcel.AgencyId == 1).Parcel;
+            parentParcel.ClassificationId.Should().Be((int)ClassificationTypes.Subdivided);
+            JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).TransferredWithinGreOn.Should().NotBeNull();
+            var property = result.Properties.First().Parcel;
+            transferredSubdivision.PropertyTypeId.Should().Be((int)PropertyTypes.Land);
+            transferredSubdivision.ProjectNumbers.Should().Be("[]");
+            transferredSubdivision.AgencyId.Should().Be(2);
+            transferredSubdivision.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
+            nonTransferredParent.AgencyId.Should().Be(1);
+            nonTransferredParent.ClassificationId.Should().Be((int)ClassificationTypes.Subdivided);
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
         }
@@ -2242,7 +2397,7 @@ namespace Pims.Dal.Test.Services
             EntityHelper.CreateAgency(2);
             parcel.AgencyId = 2;
             EntityHelper.CreatePropertyClassification(2, "new classification");
-            parcel.ClassificationId = 2;
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             project.Properties.First().Parcel = parcel;
 
             // Act
@@ -2255,7 +2410,7 @@ namespace Pims.Dal.Test.Services
             JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).ClearanceNotificationSentOn.Should().NotBeNull();
             var property = result.Properties.First().Parcel;
             property.AgencyId.Should().Be(2);
-            property.ClassificationId.Should().Be(2);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
             property.IsVisibleToOtherAgencies.Should().BeFalse();
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
@@ -2323,7 +2478,7 @@ namespace Pims.Dal.Test.Services
             EntityHelper.CreateAgency(2);
             parcel.AgencyId = 2;
             EntityHelper.CreatePropertyClassification(2, "new classification");
-            parcel.ClassificationId = 2;
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             project.Properties.First().Parcel = parcel;
 
             // Act
@@ -2336,7 +2491,7 @@ namespace Pims.Dal.Test.Services
             JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).ClearanceNotificationSentOn.Should().NotBeNull();
             var property = result.Properties.First().Parcel;
             property.AgencyId.Should().Be(2);
-            property.ClassificationId.Should().Be(2);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
             property.IsVisibleToOtherAgencies.Should().BeFalse();
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
@@ -2353,7 +2508,7 @@ namespace Pims.Dal.Test.Services
             var workflows = init.CreateDefaultWorkflowsWithStatus();
             init.SaveChanges();
             var project = init.CreateProject(1, 1);
-            init.SetStatus(project, "ERP", "AP-!SPL");
+            init.SetStatus(project, "ERP", "ERP-ON");
             var parcel = init.CreateParcel(1);
             project.AddProperty(parcel);
             parcel.UpdateProjectNumbers(project.ProjectNumber);
@@ -2362,11 +2517,12 @@ namespace Pims.Dal.Test.Services
             var options = ControllerHelper.CreateDefaultPimsOptions();
             var service = helper.CreateService<ProjectService>(user, options);
 
-            var transferredWithinGre = init.ProjectStatus.First(s => s.Code == "AP-!SPL");
-            project.StatusId = transferredWithinGre.Id; // Not in SPL status.
+            var notInSpl = init.ProjectStatus.First(s => s.Code == "AP-!SPL");
+            var updateProject = init.Projects.First();
+            updateProject.StatusId = notInSpl.Id; // Not in SPL status.
 
             // Act
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.SetStatusAsync(project, project.Workflow.Code));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await service.SetStatusAsync(updateProject, project.Workflow.Code));
         }
 
         [Fact]
@@ -2404,7 +2560,7 @@ namespace Pims.Dal.Test.Services
             EntityHelper.CreateAgency(2);
             parcel.AgencyId = 2;
             EntityHelper.CreatePropertyClassification(2, "new classification");
-            parcel.ClassificationId = 2;
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             project.Properties.First().Parcel = parcel;
 
             // Act
@@ -2417,7 +2573,7 @@ namespace Pims.Dal.Test.Services
             JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).ClearanceNotificationSentOn.Should().NotBeNull();
             var property = result.Properties.First().Parcel;
             property.AgencyId.Should().Be(2);
-            property.ClassificationId.Should().Be(2);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
             property.IsVisibleToOtherAgencies.Should().BeFalse();
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
@@ -2458,7 +2614,7 @@ namespace Pims.Dal.Test.Services
             EntityHelper.CreateAgency(2);
             parcel.AgencyId = 2;
             EntityHelper.CreatePropertyClassification(2, "new classification");
-            parcel.ClassificationId = 2;
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             project.Properties.First().Parcel = parcel;
 
             // Act
@@ -2471,7 +2627,7 @@ namespace Pims.Dal.Test.Services
             JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).MarketedOn.Should().NotBeNull();
             var property = result.Properties.First().Parcel;
             property.AgencyId.Should().Be(2);
-            property.ClassificationId.Should().Be(2);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
             property.IsVisibleToOtherAgencies.Should().BeFalse();
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
@@ -2534,7 +2690,7 @@ namespace Pims.Dal.Test.Services
             EntityHelper.CreateAgency(2);
             parcel.AgencyId = 2;
             EntityHelper.CreatePropertyClassification(2, "new classification");
-            parcel.ClassificationId = 2;
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             project.Properties.First().Parcel = parcel;
 
             // Act
@@ -2546,7 +2702,7 @@ namespace Pims.Dal.Test.Services
             result.Status.Should().Be(contractInPlace);
             var property = result.Properties.First().Parcel;
             property.AgencyId.Should().Be(2);
-            property.ClassificationId.Should().Be(2);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.SurplusActive);
             property.IsVisibleToOtherAgencies.Should().BeFalse();
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
@@ -2587,7 +2743,7 @@ namespace Pims.Dal.Test.Services
             EntityHelper.CreateAgency(2);
             parcel.AgencyId = 2;
             EntityHelper.CreatePropertyClassification(2, "new classification");
-            parcel.ClassificationId = 2;
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
             project.Properties.First().Parcel = parcel;
 
             // Act
@@ -2600,10 +2756,70 @@ namespace Pims.Dal.Test.Services
             JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).DisposedOn.Should().NotBeNull();
             var property = result.Properties.First().Parcel;
             property.AgencyId.Should().BeNull();
-            property.ClassificationId.Should().Be(4);
+            property.ClassificationId.Should().Be((int)ClassificationTypes.Disposed);
             property.IsVisibleToOtherAgencies.Should().BeFalse();
             queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
             queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
+        }
+
+        [Fact]
+        public async void SetStatusAsync_Disposed_Success_Subdivisions()
+        {
+            // Arrange
+            var helper = new TestHelper();
+            var user = PrincipalHelper.CreateForPermission(Permissions.DisposeApprove, Permissions.AdminProjects, Permissions.ProjectView).AddAgency(1);
+
+            var init = helper.InitializeDatabase(user);
+            var workflows = init.CreateDefaultWorkflowsWithStatus();
+            init.SaveChanges();
+            var project = init.CreateProject(1, 1);
+            init.SetStatus(project, "SPL", "DIS");
+            var parcel = init.CreateParcel(1);
+            var parentParcel = init.CreateParcel(2);
+            project.AddProperty(parcel);
+            parcel.UpdateProjectNumbers(project.ProjectNumber);
+            parcel.Parcels.Add(new ParcelParcel() { ParcelId = parentParcel.Id, SubdivisionId = parcel.Id, Parcel = parentParcel });
+            var metadata = new DisposalProjectMetadata()
+            {
+                DisposedOn = DateTime.UtcNow
+            };
+            project.Metadata = JsonSerializer.Serialize(metadata);
+            init.SaveChanges();
+
+            var options = ControllerHelper.CreateDefaultPimsOptions();
+            var service = helper.CreateService<ProjectService>(user, options);
+
+            var queueService = helper.GetService<Mock<IPimsService>>();
+            queueService.Setup(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<bool>()));
+            queueService.Setup(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), It.IsAny<bool>()));
+
+            var disposed = init.ProjectStatus.First(s => s.Code == "DIS");
+            project.StatusId = disposed.Id; // Marketed status
+
+            EntityHelper.CreateAgency(2);
+            parcel.AgencyId = 2;
+            EntityHelper.CreatePropertyClassification(2, "new classification");
+            parcel.ClassificationId = (int)ClassificationTypes.SurplusActive;
+            project.Properties.First().Parcel = parcel;
+
+            // Act
+            var result = await service.SetStatusAsync(project, project.Workflow.Code);
+
+            // Assert
+            Assert.NotNull(result);
+            result.StatusId.Should().Be(disposed.Id);
+            result.Status.Should().Be(disposed);
+            JsonSerializer.Deserialize<DisposalProjectMetadata>(result.Metadata).DisposedOn.Should().NotBeNull();
+            var property = result.Properties.First().Parcel;
+            property.AgencyId.Should().BeNull();
+            property.ClassificationId.Should().Be((int)ClassificationTypes.Disposed);
+            property.IsVisibleToOtherAgencies.Should().BeFalse();
+            property.Parcels.Should().BeEmpty();
+            property.PropertyTypeId.Should().Be((int)PropertyTypes.Land);
+            parentParcel.ClassificationId.Should().Be((int)ClassificationTypes.Subdivided);
+            queueService.Verify(m => m.NotificationQueue.GenerateNotifications(It.IsAny<Project>(), null, project.StatusId, true), Times.Never());
+            queueService.Verify(m => m.NotificationQueue.SendNotificationsAsync(It.IsAny<IEnumerable<NotificationQueue>>(), true), Times.Once());
+
         }
 
         [Fact]

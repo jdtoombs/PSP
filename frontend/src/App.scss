@@ -15,31 +15,12 @@ ul.pagination li {
   max-width: 750px;
 }
 
-.modal-dialog.modal-s {
-  max-width: 400px;
+.modal-dialog.modal-m {
+  max-width: 500px;
 }
 
-div.bootstrap-table {
-  .col {
-    border-bottom-width: 2px;
-    vertical-align: bottom;
-    border-bottom: 2px solid $table-color;
-    border: 1px solid $table-color;
-    padding: 0.75rem;
-  }
-  .row {
-    vertical-align: inherit;
-    margin: 0;
-  }
-  div.row:nth-of-type(even) {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  form:nth-of-type(odd) {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  .thead {
-    font-weight: 700;
-  }
+.modal-dialog.modal-s {
+  max-width: 400px;
 }
 
 .Toastify__toast.Toastify__toast--dark {
@@ -64,6 +45,10 @@ div.bootstrap-table {
 //React table global styling
 .table .tr .td {
   word-break: break-word;
+}
+
+.table .th.reset-filter.svg-btn {
+  display: none;
 }
 
 select.form-control.is-invalid {
@@ -93,7 +78,8 @@ select.form-control.is-invalid {
 }
 
 //by default, highlight dropdown options blue
-.dropdown-item {
+.dropdown-item,
+.dropdown-header {
   color: $text-color;
   &:hover {
     color: #fff;

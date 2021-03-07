@@ -10,7 +10,7 @@ const InnerRow = styled(Row)`
 
 const LeftCol = styled(Col)`
   width: 110px;
-  max-width: 110px;
+  max-width: 135px;
   padding-right: 10px;
   padding-left: 0px;
 `;
@@ -28,7 +28,7 @@ const RightCol = styled(Col)`
 
 interface IThreeColItem {
   leftSideLabel: string;
-  rightSideItem: string | number | undefined;
+  rightSideItem: string | number | React.ReactNode | undefined;
 }
 
 export const ThreeColumnItem: React.FC<IThreeColItem> = ({ leftSideLabel, rightSideItem }) => {

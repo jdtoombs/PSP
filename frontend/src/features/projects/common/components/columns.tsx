@@ -30,7 +30,7 @@ const sumFinancialRows = (properties: IProperty[], key: string): string => {
 };
 
 const getEditableClassificationCell = (limitLabels?: string[]) => (cellInfo: any) => {
-  const classifications = useCodeLookups().getOptionsByType('PropertyClassification');
+  const classifications = useCodeLookups().getPropertyClassificationOptions();
   const context = useFormikContext();
   return (
     <FastSelect
@@ -240,6 +240,7 @@ export const getPropertyColumns = ({
       accessor: 'netBook',
       Cell: editableFinancials ? EditableMoneyCell : MoneyCell,
       minWidth: 145,
+      clickable: !editableFinancials,
       align: 'left',
     },
     {
@@ -247,13 +248,25 @@ export const getPropertyColumns = ({
       accessor: 'market',
       Cell: editableFinancials ? EditableMoneyCell : MoneyCell,
       minWidth: 145,
+      clickable: !editableFinancials,
       align: 'left',
     },
     {
-      Header: 'Assessed Value',
+      Header: 'Assessed Land',
       accessor: (row: IProperty) =>
-        row.propertyTypeId === PropertyTypes.PARCEL ? row.assessedLand : row.assessedBuilding,
-      Cell: editableFinancials ? EditableMoneyCell : MoneyCell,
+        [PropertyTypes.PARCEL, PropertyTypes.SUBDIVISION].includes(row.propertyTypeId)
+          ? row.assessedLand
+          : undefined,
+      Cell: MoneyCell,
+      clickable: true,
+      minWidth: 145,
+      align: 'left',
+    },
+    {
+      Header: 'Assessed Building',
+      accessor: (row: IProperty) => row.assessedBuilding,
+      Cell: MoneyCell,
+      clickable: true,
       minWidth: 145,
       align: 'left',
     },

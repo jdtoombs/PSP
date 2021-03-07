@@ -122,7 +122,7 @@ namespace Pims.Api.Areas.Tools.Helpers
 
                     var prop = props.FirstOrDefault(p => String.Compare(p.Name, keyValue[0], true) == 0);
                     var modelValue = prop?.GetValue(model);
-                    if (prop != null && modelValue == null || modelValue.Equals(prop.PropertyType.GetDefault()))
+                    if (prop != null && modelValue == null || modelValue?.Equals(prop.PropertyType.GetDefault()) == true)
                     {
                         if (prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
                         {
@@ -163,7 +163,10 @@ namespace Pims.Api.Areas.Tools.Helpers
                 "Contract in Place" => GetWorkflow("SPL"),
                 "On Market" => GetWorkflow("SPL"),
                 "Pre-Market" => GetWorkflow("SPL"),
-                _ => _adminService.Workflow.GetForStatus(model.Status).OrderBy(w => w.SortOrder).Last()
+                "Not In Spl" => GetWorkflow("SPL"),
+                _ => status.Code == "AP-!SPL"
+                    ? _adminService.Workflow.Get(_workflows.FirstOrDefault(w => w.Code == "ERP").Id)
+                    : _adminService.Workflow.GetForStatus(model.Status).OrderBy(w => w.SortOrder).Last()
             };
 
             project ??= new Entity.Project();
@@ -185,37 +188,7 @@ namespace Pims.Api.Areas.Tools.Helpers
             // Extract properties from PID note.
             var pidNote = model.Notes?.FirstOrDefault(n => n.Key == "PID").Value;
             var pids = Regex.Matches(pidNote ?? "", "[0-9]{3}-[0-9]{3}-[0-9]{3}").Select(m => m.Value).NotNull().Distinct();
-            if (!String.IsNullOrWhiteSpace(pidNote))
-            {
-                // Need to load any properties currently linked to this project.
-                if (project.Id > 0)
-                {
-                    var existingProject = _service.Project.Get(project.ProjectNumber);
-
-                    pids.ForEach(pid =>
-                    {
-                        // If the parcel has not already been added, add it to the project.
-                        var addProperty = true;
-                        foreach (var property in existingProject.Properties.Where(p => p.PropertyType == Entity.PropertyTypes.Land))
-                        {
-                            var parcel = _service.Parcel.Get(property.ParcelId.Value);
-                            if (parcel.ParcelIdentity == pid)
-                            {
-                                addProperty = false;
-                                break;
-                            }
-                        }
-                        if (addProperty) AddProperty(project, pid);
-                    });
-
-                }
-                else
-                {
-                    pids.ForEach(pid => AddProperty(project, pid));
-                }
-            }
-
-            project.TierLevel = GetTier(model.Market, pids.Any() ? pids.Count() : project.Properties.Count()); // Most projects have no properties linked.
+            project.TierLevel = GetTier(model.Market, project.Properties.Any() ? project.Properties.Count() : pids.Count()); // Most projects have no properties linked.
             project.TierLevelId = project.TierLevel.Id;
             project.Risk = GetRisk(model.Risk);
             project.RiskId = project.Risk.Id;

@@ -18,6 +18,8 @@ import { useApi } from 'hooks/useApi';
 import useKeycloakWrapper from 'hooks/useKeycloakWrapper';
 import { PropertyTypes } from 'constants/propertyTypes';
 import SelectedPropertyMarker from './SelectedPropertyMarker/SelectedPropertyMarker';
+import * as parcelsActions from 'actions/parcelsActions';
+import { useDispatch } from 'react-redux';
 
 export type PointClustererProps = {
   points: Array<PointFeature>;
@@ -75,7 +77,6 @@ export const convertToProperty = (
   ) {
     return property;
   }
-
   return null;
 };
 
@@ -204,18 +205,6 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
   );
 
   /**
-   * Update the map view to center on the selected parcel when it changes.
-   */
-  useDeepCompareEffect(() => {
-    if (!!selected?.parcelDetail?.latitude && !!selected?.parcelDetail?.longitude) {
-      map.setView(
-        { lat: selected.parcelDetail.latitude, lng: selected.parcelDetail.longitude },
-        Math.max(maxZoom as number, map.getZoom()),
-      );
-    }
-  }, [selected]);
-
-  /**
    * Update the map bounds and zoom to make all draft properties visible.
    */
   useDeepCompareEffect(() => {
@@ -272,14 +261,16 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
     },
     [getParcel, getBuilding, popUpContext],
   );
+
   const keycloak = useKeycloakWrapper();
+  const dispatch = useDispatch();
+
   return (
     <>
       <FeatureGroup ref={featureGroupRef}>
         {clusters.map((cluster, index) => {
           // every cluster point has coordinates
           const [longitude, latitude] = cluster.geometry.coordinates;
-
           const {
             cluster: isCluster,
             point_count: pointCount,
@@ -305,7 +296,7 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
                     iconSize: [40, 40],
                   })
                 }
-              ></Marker>
+              />
             );
           }
 
@@ -317,13 +308,25 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
               position={[latitude, longitude]}
               icon={getMarkerIcon(cluster)}
               onclick={() => {
+                const convertedProperty = convertToProperty(
+                  cluster.properties,
+                  latitude,
+                  longitude,
+                );
+                //sets this pin as currently selected
+                if (
+                  cluster.properties.propertyTypeId === PropertyTypes.PARCEL ||
+                  cluster.properties.propertyTypeId === PropertyTypes.SUBDIVISION
+                ) {
+                  dispatch(parcelsActions.storeParcelDetail(convertedProperty as IParcel));
+                } else {
+                  dispatch(parcelsActions.storeBuildingDetail(convertedProperty as IBuilding));
+                }
                 onMarkerClick(); //open information slideout
                 if (keycloak.canUserViewProperty(cluster.properties as IProperty)) {
                   fetchProperty(cluster.properties.propertyTypeId, cluster.properties.id);
                 } else {
-                  popUpContext.setPropertyInfo(
-                    convertToProperty(cluster.properties, latitude, longitude),
-                  );
+                  popUpContext.setPropertyInfo(convertedProperty);
                 }
                 popUpContext.setPropertyTypeID(cluster.properties.propertyTypeId);
               }}
@@ -338,8 +341,26 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
             {...(m.properties as any)}
             key={index}
             position={m.position}
-            icon={getMarkerIcon(m)}
+            //highlight pin if currently selected
+            icon={getMarkerIcon(
+              m,
+              (m.properties.id as number) === (selected?.parcelDetail?.id as number),
+            )}
             onclick={() => {
+              //sets this pin as currently selected
+              const convertedProperty = convertToProperty(
+                m.properties,
+                m.position.lat,
+                m.position.lng,
+              );
+              if (
+                m.properties.propertyTypeId === PropertyTypes.PARCEL ||
+                m.properties.propertyTypeId === PropertyTypes.SUBDIVISION
+              ) {
+                dispatch(parcelsActions.storeParcelDetail(convertedProperty as IParcel));
+              } else {
+                dispatch(parcelsActions.storeBuildingDetail(convertedProperty as IBuilding));
+              }
               onMarkerClick(); //open information slideout
               if (keycloak.canUserViewProperty(m.properties as IProperty)) {
                 fetchProperty(m.properties.propertyTypeId, m.properties.id);

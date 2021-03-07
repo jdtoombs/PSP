@@ -347,7 +347,7 @@ const MapSideBarContainer: React.FunctionComponent<IMapSideBarContainerProps> = 
       case SidebarContextType.ADD_BARE_LAND:
         return (
           <>
-            <LandSvg className="svg" /> Submit Bare Land (to inventory)
+            <LandSvg className="svg" /> Submit Land (to inventory)
           </>
         );
       case SidebarContextType.ADD_SUBDIVISION_LAND:
@@ -369,7 +369,7 @@ const MapSideBarContainer: React.FunctionComponent<IMapSideBarContainerProps> = 
       case SidebarContextType.UPDATE_BARE_LAND:
         return (
           <>
-            <LandSvg className="svg" /> View/Update bare land
+            <LandSvg className="svg" /> View/Update land
             <ConditionalEditButton />
             <ConditionalDeleteButton />
           </>
@@ -532,6 +532,7 @@ const MapSideBarContainer: React.FunctionComponent<IMapSideBarContainerProps> = 
       setShowSideBar={setShowSideBar}
       size={size}
       hidePolicy={true}
+      propertyName={buildingDetail?.name ?? parcelDetail?.name}
     >
       {render()}
       <Prompt message={handleLocationChange}></Prompt>

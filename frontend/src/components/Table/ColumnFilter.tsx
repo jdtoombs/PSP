@@ -7,6 +7,7 @@ import clsx from 'classnames';
 import { FiFilter } from 'react-icons/fi';
 import { FaFilter } from 'react-icons/fa';
 import variables from '_variables.module.scss';
+import TooltipWrapper from 'components/common/TooltipWrapper';
 
 interface IColumnFilterProps {
   /** Column instance from react table */
@@ -21,6 +22,7 @@ const Wrapper = styled('div')`
   justify-items: center;
   position: relative;
   font-size: 12px;
+  padding: 0 5px;
 `;
 
 const InputContainer = styled('div')`
@@ -63,12 +65,12 @@ const ColumnFilter: React.FC<IColumnFilterProps> = ({ column, onFilter, children
   const hasValue = !!getIn(context.values, (column.filter.props || {}).name);
   const Control = column.filter!.component as any;
 
-  return (
+  const filter = (
     <Wrapper className={clsx('filter-wrapper', { active: hasValue })}>
       {hasValue ? (
-        <FaFilter onClick={handleClick} style={{ fontSize: 10, marginRight: 5 }} />
+        <FaFilter onClick={handleClick} style={{ fontSize: 10, margin: '0 5' }} />
       ) : (
-        <FiFilter onClick={handleClick} style={{ fontSize: 10, marginRight: 5 }} />
+        <FiFilter onClick={handleClick} style={{ fontSize: 10, margin: '0 5' }} />
       )}
 
       <span onClick={handleClick}>{children}</span>
@@ -84,6 +86,19 @@ const ColumnFilter: React.FC<IColumnFilterProps> = ({ column, onFilter, children
         </ClickAwayListener>
       )}
     </Wrapper>
+  );
+
+  if (!(column.filter?.props as any)?.tooltip) {
+    return filter;
+  }
+
+  return (
+    <TooltipWrapper
+      toolTipId={`${column.id}-filter`}
+      toolTip={(column.filter?.props as any)?.tooltip}
+    >
+      {filter}
+    </TooltipWrapper>
   );
 };
 
