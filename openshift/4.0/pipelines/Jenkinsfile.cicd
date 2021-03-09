@@ -74,7 +74,7 @@ pipeline {
           // ensure required secrets and credentials are available in the CI environment
           // [add more secrets here if needed...]
           sh "oc extract secret/rocket-chat-secrets --to=${env.WORKSPACE} --confirm"
-          env.ROCKET_DEPLOY_WEBHOOK = readFile('rocket-deploy-webhook').trim()
+          //env.ROCKET_DEPLOY_WEBHOOK = readFile('rocket-deploy-webhook').trim()
 
           // initialize CI environment values
           env.CHANGELOG = commonPipeline.getChangeLog()
