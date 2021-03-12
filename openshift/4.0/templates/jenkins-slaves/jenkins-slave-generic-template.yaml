@@ -129,7 +129,7 @@ parameters:
     description: Target namespace reference (i.e. '354028-tools')
     displayName: Namespace
     required: true
-    value: 354028-tools
+    value: 3cd915-tools
   - name: CPU_REQUEST
     description: Minimal CPU needed to run
     displayName: CPU Request
