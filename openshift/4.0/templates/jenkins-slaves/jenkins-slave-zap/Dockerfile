@@ -49,7 +49,8 @@ RUN curl -sL https://github.com/zaproxy/zaproxy/releases/download/v${ZAPROXY_VER
     chown root:root /zap -R && \
     chown root:root -R /var/lib/jenkins && \
     chmod 777 /var/lib/jenkins -R && \
-    chmod 777 /zap -R
+    chmod 777 /zap -R && \
+	chmod 777 /usr/local/bin/run-jnlp-client -R
 
 WORKDIR /var/lib/jenkins
 
