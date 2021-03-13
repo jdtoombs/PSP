@@ -35,13 +35,13 @@ parameters:
     displayName: "Git Repository URL"
     description: "The URL of the repository with your application source code."
     required: true
-    value: "https://github.com/bcgov/PIMS.git"
+    value: "https://github.com/bcgov/PSP.git"
   - name: GIT_REF
     displayName: "Git Reference"
     description:
       "Set this to a branch name, tag or other ref of your repository if you
       are not using the default branch."
-    value: dev
+    value: citzpims
   - name: CONTEXT_DIR
     displayName: "Context Directory"
     description: "Set this to use a subdirectory of the source code repository"
