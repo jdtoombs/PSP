@@ -5,8 +5,9 @@ WORKDIR /usr/config
 COPY . /usr/config
 
 # Make sure GIT has the following permissions set.
-RUN chmod +x ./entrypoint.sh
-RUN chmod +x ./setup.sh
+RUN chmod 777 ./entrypoint.sh -R && \
+    chmod 777 ./setup.sh -R
+
 ENTRYPOINT ["./entrypoint.sh"]
 
 EXPOSE 1433
