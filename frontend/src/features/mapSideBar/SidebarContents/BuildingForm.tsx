@@ -57,7 +57,7 @@ const FormContentWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  margin-bottom: 70px;
+  margin-bottom: 20px;
 `;
 
 const FormContent = styled.div`
@@ -73,7 +73,7 @@ const FormFooter = styled.div`
   align-items: center;
   position: sticky;
   background-color: ${variables.filterBackgroundColor};
-  bottom: 25px;
+  bottom: -20px;
 `;
 
 const FillRemainingSpace = styled.span`
@@ -123,7 +123,6 @@ export const defaultBuildingValues: IBuilding = {
  * This form will appear after selecting 'Add Building' after navigating to Manage Property > Submit Property in PIMS
  * @component
  */
-
 const Form: React.FC<IBuildingForm> = ({
   isPropertyAdmin,
   setMovingPinNameSpace,

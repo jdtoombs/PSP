@@ -3,13 +3,13 @@ import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Container, Button } from 'react-bootstrap';
 import queryString from 'query-string';
-import { fill, isEmpty, pick, range } from 'lodash';
+import { fill, isEmpty, pick, range, noop, keys, intersection } from 'lodash';
 import * as API from 'constants/API';
 import { ENVIRONMENT } from 'constants/environment';
 import { decimalOrUndefined, mapLookupCode } from 'utils';
 import download from 'utils/download';
 import { IPropertyQueryParams, IProperty } from '.';
-import { columns as cols } from './columns';
+import { columns as cols, buildingColumns as buildingCols } from './columns';
 import { Table } from 'components/Table';
 import service from '../service';
 import { FaFolderOpen, FaFolder, FaEdit, FaFileExport } from 'react-icons/fa';
@@ -41,6 +41,7 @@ import {
   toApiProperty,
 } from 'features/projects/common/projectConverter';
 import { IApiProperty } from 'features/projects/common';
+import { PropertyTypes } from 'constants/index';
 
 const getPropertyReportUrl = (filter: IPropertyQueryParams) =>
   `${ENVIRONMENT.apiUrl}/reports/properties?${filter ? queryString.stringify(filter) : ''}`;
@@ -90,6 +91,8 @@ const defaultFilterValues: IPropertyFilter = {
   maxAssessedValue: '',
   maxNetBookValue: '',
   maxMarketValue: '',
+  inSurplusPropertyProgram: false,
+  inEnhancedReferralProcess: false,
   surplusFilter: false,
 };
 
@@ -272,17 +275,48 @@ const PropertyListView: React.FC = () => {
 
   // Filtering and pagination state
   const [filter, setFilter] = useState<IPropertyFilter>(defaultFilterValues);
-  const columns = useMemo(
+  const isParcel =
+    !filter ||
+    [PropertyTypeNames.Land.toString(), PropertyTypeNames.Subdivision.toString()].includes(
+      filter?.propertyType ?? '',
+    );
+  const parcelColumns = useMemo(
     () =>
       cols(
         agenciesList,
         subAgencies,
         municipalities,
         propertyClassifications,
-        !filter || filter.propertyType === 'Land' ? 0 : 1,
+        PropertyTypes.PARCEL,
         editable,
       ),
-    [subAgencies, agenciesList, municipalities, propertyClassifications, editable, filter],
+    [agenciesList, subAgencies, municipalities, propertyClassifications, editable],
+  );
+
+  const buildingExpandColumns = useMemo(
+    () =>
+      cols(
+        agenciesList,
+        subAgencies,
+        municipalities,
+        propertyClassifications,
+        PropertyTypes.BUILDING,
+        false,
+      ),
+    [agenciesList, subAgencies, municipalities, propertyClassifications],
+  );
+
+  const buildingColumns = useMemo(
+    () =>
+      buildingCols(
+        agenciesList,
+        subAgencies,
+        municipalities,
+        propertyClassifications,
+        PropertyTypes.BUILDING,
+        editable,
+      ),
+    [agenciesList, subAgencies, municipalities, propertyClassifications, editable],
   );
 
   const [pageSize, setPageSize] = useState(10);
@@ -432,6 +466,106 @@ const PropertyListView: React.FC = () => {
       .map(value => agencySelections.find(agency => agency.value === value) || '') as any;
   }
 
+  const onRowClick = useCallback((row: IProperty) => {
+    window.open(
+      `/mapview?${queryString.stringify({
+        sidebar: true,
+        disabled: true,
+        loadDraft: false,
+        parcelId: [PropertyTypes.PARCEL, PropertyTypes.SUBDIVISION].includes(row.propertyTypeId)
+          ? row.id
+          : undefined,
+        buildingId: row.propertyTypeId === PropertyTypes.BUILDING ? row.id : undefined,
+      })}`,
+      '_blank',
+    );
+  }, []);
+
+  const submitTableChanges = async (
+    values: { properties: IProperty[] },
+    actions: FormikProps<{ properties: IProperty[] }>,
+  ) => {
+    let nextProperties = [...values.properties];
+    const editableColumnKeys = ['assessedLand', 'assessedBuilding', 'netBook', 'market'];
+
+    const changedRows = dirtyRows
+      .map(change => {
+        const data = { ...values.properties![change.rowId] };
+        return { data, ...change } as any;
+      })
+      .filter(c => intersection(keys(c), editableColumnKeys).length > 0);
+
+    let errors: any[] = fill(range(nextProperties.length), undefined);
+    let touched: any[] = fill(range(nextProperties.length), undefined);
+    if (changedRows.length > 0) {
+      const changedRowIds = changedRows.map(x => x.rowId);
+      // Manually validate the table form
+      const currentErrors = await actions.validateForm();
+      const errorRowIds = keys(currentErrors.properties)
+        .map(Number)
+        .filter(i => !!currentErrors.properties![i]);
+      const foundRowErrorsIndexes = intersection(changedRowIds, errorRowIds);
+      if (foundRowErrorsIndexes.length > 0) {
+        for (const index of foundRowErrorsIndexes) {
+          errors[index] = currentErrors.properties![index];
+          // Marked the editable cells as touched
+          touched[index] = keys(currentErrors.properties![index]).reduce(
+            (acc: any, current: string) => {
+              return { ...acc, [current]: true };
+            },
+            {},
+          );
+        }
+      } else {
+        for (const change of changedRows) {
+          const apiProperty = toApiProperty(change.data as any, true);
+          const callApi = apiProperty.parcelId ? updateParcel : updateBuilding;
+          try {
+            const response: any = await callApi(apiProperty.id, apiProperty);
+            nextProperties = nextProperties.map((item, index: number) => {
+              if (index === change.rowId) {
+                item = {
+                  ...item,
+                  ...flattenProperty(response),
+                } as any;
+              }
+              return item;
+            });
+
+            toast.info(
+              `Successfully saved changes for ${apiProperty.name || apiProperty.address?.line1}`,
+            );
+          } catch (error) {
+            const errorMessage = (error as Error).message;
+
+            touched[change.rowId] = pick(change, ['assessedLand', 'netBook', 'market']);
+            toast.error(
+              `Failed to save changes for ${apiProperty.name ||
+                apiProperty.address?.line1}. ${errorMessage}`,
+            );
+            errors[change.rowId] = {
+              assessedLand: change.assessedland && (errorMessage || 'Save request failed.'),
+              netBook: change.netBook && (errorMessage || 'Save request failed.'),
+              market: change.market && (errorMessage || 'Save request failed.'),
+            };
+          }
+        }
+      }
+
+      setDirtyRows([]);
+      if (!errors.find(x => !!x)) {
+        actions.setTouched({ properties: [] });
+        setData(nextProperties);
+      } else {
+        actions.resetForm({
+          values: { properties: nextProperties },
+          errors: { properties: errors },
+          touched: { properties: touched },
+        });
+      }
+    }
+  };
+
   return (
     <Container fluid className="PropertyListView">
       <Container fluid className="filter-container border-bottom">
@@ -532,9 +666,11 @@ const PropertyListView: React.FC = () => {
               >
                 <Button
                   data-testid="save-changes"
-                  onClick={() => {
+                  onClick={async () => {
                     if (tableFormRef.current?.dirty && dirtyRows.length > 0) {
-                      tableFormRef.current.submitForm();
+                      const values = tableFormRef.current.values;
+                      const actions = tableFormRef.current;
+                      await submitTableChanges(values, actions);
                     }
                   }}
                 >
@@ -548,13 +684,19 @@ const PropertyListView: React.FC = () => {
         <Table<IProperty>
           name="propertiesTable"
           lockPageSize={true}
-          columns={columns}
+          columns={isParcel ? parcelColumns : buildingColumns}
           data={data || []}
           loading={data === undefined}
           filterable
           sort={sorting}
           pageIndex={pageIndex}
           onRequestData={handleRequestData}
+          onRowClick={onRowClick}
+          tableToolbarText={
+            filter.propertyType === PropertyTypeNames.Building
+              ? undefined
+              : '* Assessed value per building'
+          }
           pageCount={pageCount}
           onSortChange={(column: string, direction: SortDirection) => {
             if (!!direction) {
@@ -575,7 +717,14 @@ const PropertyListView: React.FC = () => {
           detailsPanel={{
             render: val => {
               if (expandData[val.id]) {
-                return <Buildings hideHeaders={true} data={expandData[val.id]} />;
+                return (
+                  <Buildings
+                    hideHeaders={true}
+                    data={expandData[val.id]}
+                    columns={buildingExpandColumns}
+                    onRowClick={onRowClick}
+                  />
+                );
               }
             },
             icons: {
@@ -612,64 +761,7 @@ const PropertyListView: React.FC = () => {
                   }),
                 ),
               })}
-              enableReinitialize
-              onSubmit={async (values, actions) => {
-                let nextProperties = [...values.properties];
-                const changedRows = dirtyRows.map(change => {
-                  const data = { ...values.properties![change.rowId] };
-                  return { data, ...change } as any;
-                });
-                let errors: any[] = fill(range(nextProperties.length), undefined);
-                let touched: any[] = fill(range(nextProperties.length), undefined);
-                if (changedRows.length > 0) {
-                  for (const change of changedRows) {
-                    const apiProperty = toApiProperty(change.data as any, true);
-                    const callApi = apiProperty.parcelId ? updateParcel : updateBuilding;
-                    try {
-                      const response: any = await callApi(apiProperty.id, apiProperty);
-                      nextProperties = nextProperties.map((item, index: number) => {
-                        if (index === change.rowId) {
-                          item = {
-                            ...item,
-                            ...flattenProperty(response),
-                          } as any;
-                        }
-                        return item;
-                      });
-
-                      toast.info(
-                        `Successfully saved changes for ${apiProperty.name ||
-                          apiProperty.address?.line1}`,
-                      );
-                    } catch (error) {
-                      const errorMessage = (error as Error).message;
-
-                      touched[change.rowId] = pick(change, ['assessedLand', 'netBook', 'market']);
-                      toast.error(
-                        `Failed to save changes for ${apiProperty.name ||
-                          apiProperty.address?.line1}. ${errorMessage}`,
-                      );
-                      errors[change.rowId] = {
-                        assessedLand:
-                          change.assessedland && (errorMessage || 'Save request failed.'),
-                        netBook: change.netBook && (errorMessage || 'Save request failed.'),
-                        market: change.market && (errorMessage || 'Save request failed.'),
-                      };
-                    }
-                  }
-
-                  setDirtyRows([]);
-                  if (!errors.find(x => !!x)) {
-                    setData(nextProperties);
-                  } else {
-                    actions.resetForm({
-                      values: { properties: nextProperties },
-                      errors: { properties: errors },
-                      touched: { properties: touched },
-                    });
-                  }
-                }
-              }}
+              onSubmit={noop}
             >
               <Form>
                 <DirtyRowsTracker setDirtyRows={setDirtyRows} />

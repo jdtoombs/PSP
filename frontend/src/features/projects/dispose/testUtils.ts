@@ -12,6 +12,19 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import * as API from 'constants/API';
 import { NoteTypes, PropertyTypes } from '../../../constants';
+import { useKeycloak } from '@react-keycloak/web';
+
+export const mockKeycloak = (claims: string[], agencies: number[]) => {
+  (useKeycloak as jest.Mock).mockReturnValue({
+    keycloak: {
+      userInfo: {
+        agencies: agencies,
+        roles: claims,
+      },
+      subject: 'test',
+    },
+  });
+};
 
 export const mockTasks: IProjectTask[] = [
   {
@@ -281,7 +294,8 @@ export const getStore = (mockProject: IProject, tab?: SPPApprovalTabs) =>
         {
           code: 'BCT',
           name: 'BC Transit',
-          id: 1,
+          value: 2,
+          id: 2,
           type: API.AGENCY_CODE_SET_NAME,
         },
       ],

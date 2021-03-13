@@ -87,9 +87,10 @@ const snapshotToasts: LifecycleToasts = {
  */
 export const useProjectSnapshotApi = () => {
   const dispatch = useDispatch();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const defaultAxios = useCallback(
     getAxios(dispatch, { errorToast: () => toast.error('Failed to load reports') }),
-    [],
+    [dispatch],
   );
 
   const getProjectReports = useCallback(async (): Promise<IReport[]> => {
@@ -121,7 +122,7 @@ export const useProjectSnapshotApi = () => {
       const { data } = await getAxios(dispatch, snapshotToasts).get<ISnapshot[]>(
         `refresh/${report.id}`,
       );
-      return _.orderBy(data, ['projectId', 'snapshotOn'], ['asc', 'desc']);
+      return data;
     },
     [dispatch],
   );

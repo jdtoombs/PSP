@@ -20,6 +20,8 @@ import { PropertyTypes } from 'constants/propertyTypes';
 import SelectedPropertyMarker from './SelectedPropertyMarker/SelectedPropertyMarker';
 import * as parcelsActions from 'actions/parcelsActions';
 import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
+import queryString from 'query-string';
 
 export type PointClustererProps = {
   points: Array<PointFeature>;
@@ -102,6 +104,8 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
   const featureGroupRef = useRef<any>();
   const draftFeatureGroupRef = useRef<any>();
   const filterState = useFilterContext();
+  const location = useLocation();
+  const { parcelId, buildingId } = queryString.parse(location.search);
 
   const [currentSelected, setCurrentSelected] = useState(selected);
   const [currentCluster, setCurrentCluster] = useState<
@@ -144,6 +148,12 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
   useDeepCompareEffect(() => {
     if (!currentClusterIds.includes(+(selected?.parcelDetail?.id ?? 0))) {
       setCurrentSelected(selected);
+      if (!!parcelId && !!selected?.parcelDetail) {
+        map.setView(
+          [selected?.parcelDetail?.latitude as number, selected?.parcelDetail?.longitude as number],
+          Math.max(MAX_ZOOM, map.getZoom()),
+        );
+      }
     } else {
       setCurrentSelected(undefined);
     }
@@ -232,7 +242,7 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
         groupBounds.isValid() &&
         group.getBounds().isValid() &&
         filterState.changed &&
-        !selected &&
+        !selected?.parcelDetail &&
         tilesLoaded
       ) {
         filterState.setChanged(false);
@@ -246,24 +256,36 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
 
   const popUpContext = React.useContext(PropertyPopUpContext);
 
+  const dispatch = useDispatch();
   const { getParcel, getBuilding } = useApi();
   const fetchProperty = React.useCallback(
     (propertyTypeId: number, id: number) => {
+      popUpContext.setLoading(true);
       if ([PropertyTypes.PARCEL, PropertyTypes.SUBDIVISION].includes(propertyTypeId)) {
-        getParcel(id as number).then(parcel => {
-          popUpContext.setPropertyInfo(parcel);
-        });
+        getParcel(id as number)
+          .then(parcel => {
+            popUpContext.setPropertyInfo(parcel);
+          })
+          .finally(() => {
+            popUpContext.setLoading(false);
+          });
       } else if (propertyTypeId === PropertyTypes.BUILDING) {
-        getBuilding(id as number).then(building => {
-          popUpContext.setPropertyInfo(building);
-        });
+        getBuilding(id as number)
+          .then(building => {
+            popUpContext.setPropertyInfo(building);
+            if (!!building.parcels.length) {
+              dispatch(parcelsActions.storeBuildingDetail(building));
+            }
+          })
+          .finally(() => {
+            popUpContext.setLoading(false);
+          });
       }
     },
-    [getParcel, getBuilding, popUpContext],
+    [getParcel, popUpContext, getBuilding, dispatch],
   );
 
   const keycloak = useKeycloakWrapper();
-  const dispatch = useDispatch();
 
   return (
     <>
@@ -388,6 +410,11 @@ export const PointClusterer: React.FC<PointClustererProps> = ({
             <SelectedPropertyMarker
               {...selected.parcelDetail}
               icon={getMarkerIcon({ properties: selected } as any, true)}
+              className={
+                Number(parcelId ?? buildingId) === selected?.parcelDetail?.id
+                  ? 'active-selected'
+                  : ''
+              }
               position={[
                 selected.parcelDetail!.latitude as number,
                 selected.parcelDetail!.longitude as number,

@@ -93,7 +93,7 @@ exports[`Land Form component renders correctly 1`] = `
   flex-direction: column;
   width: 100%;
   height: 100%;
-  margin-bottom: 70px;
+  margin-bottom: 20px;
 }
 
 .c3 {
@@ -116,7 +116,7 @@ exports[`Land Form component renders correctly 1`] = `
   position: -webkit-sticky;
   position: sticky;
   background-color: filterBackgroundColor;
-  bottom: 40px;
+  bottom: -20px;
 }
 
 .c8 {
@@ -393,6 +393,7 @@ exports[`Land Form component renders correctly 1`] = `
                       </div>
                       <button
                         class="Button Button--icon-only bg-warning btn btn-primary"
+                        id="search-button"
                         type="submit"
                       >
                         <div
@@ -436,6 +437,7 @@ exports[`Land Form component renders correctly 1`] = `
                       </div>
                       <button
                         class="Button Button--icon-only bg-warning btn btn-primary"
+                        id="search-button"
                         type="submit"
                       >
                         <div
@@ -486,6 +488,7 @@ exports[`Land Form component renders correctly 1`] = `
                       <button
                         class="Button Button--disabled Button--icon-only bg-warning btn btn-primary"
                         disabled=""
+                        id="search-button"
                         type="submit"
                       >
                         <div

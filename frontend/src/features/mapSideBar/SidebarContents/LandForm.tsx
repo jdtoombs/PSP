@@ -61,7 +61,7 @@ const FormContentWrapper = styled.div`
   flex-direction: column;
   width: 100%;
   height: 100%;
-  margin-bottom: 70px;
+  margin-bottom: 20px;
 `;
 
 const FormContent = styled.div`
@@ -77,7 +77,7 @@ const FormFooter = styled.div`
   align-items: center;
   position: sticky;
   background-color: ${variables.filterBackgroundColor};
-  bottom: 40px;
+  bottom: -20px;
 `;
 
 const FillRemainingSpace = styled.span`
@@ -101,6 +101,7 @@ export const getInitialValues = (): IParcel & ISearchFields => {
     ...defaultInformationFormValues,
     latitude: '',
     longitude: '',
+    agency: '',
     address: defaultAddressValues,
     buildings: [],
     searchPid: '',
@@ -133,6 +134,11 @@ export const valuesToApiFormat = (values: ISteppedFormValues<IParcel>): IParcel 
   return apiValues.data;
 };
 
+/**
+ * A component used for submitting standalone land.
+ * This form will appear after selecting 'Add LAnd' after navigating to Manage Property > Submit Property in PIMS
+ * @component
+ */
 const Form: React.FC<ILandForm> = ({
   handleGeocoderChanges,
   setMovingPinNameSpace,

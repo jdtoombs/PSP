@@ -1,3 +1,4 @@
+import { ILeasedLand } from 'features/mapSideBar/SidebarContents/AssociatedLandForm';
 import * as ActionTypes from 'constants/actionTypes';
 import { PointFeature } from 'components/maps/types';
 import { PropertyTypes } from 'constants/propertyTypes';
@@ -7,7 +8,11 @@ import { PropertyTypes } from 'constants/propertyTypes';
 export interface IProperty {
   id: number | '';
   propertyTypeId?: PropertyTypes;
-  agencyId?: number | '';
+  agencyId: number | '';
+  agency: string;
+  subAgency?: string;
+  agencyFullName?: string;
+  subAgencyFullName?: string;
   latitude: number | '';
   longitude: number | '';
   name?: string;
@@ -90,15 +95,13 @@ export interface IBuilding extends IProperty {
   buildingTenancyUpdatedOn?: string;
   rentableArea: number | '';
   totalArea: number | '';
-  agencyId: number | '';
-  agency: string;
   agencyCode: string;
-  subAgency?: string;
   assessedLand: number | '';
   assessedBuilding: number | '';
   evaluations: IEvaluation[];
   fiscals: IFiscal[];
   parcels: IParcel[];
+  leasedLandMetadata?: ILeasedLand[];
 }
 
 export interface IFlatBuilding extends IProperty {
@@ -121,8 +124,6 @@ export interface IFlatBuilding extends IProperty {
   transferLeaseOnSale: boolean;
   buildingTenancy: string;
   rentableArea: number | '';
-  agencyId: number | '';
-  agency: string;
   agencyCode: string;
   assessedLand: number | '';
   assessedBuilding: number | '';
@@ -162,9 +163,6 @@ export interface IParcel extends IProperty {
   landLegalDescription: string;
   zoning: string;
   zoningPotential: string;
-  agency?: string;
-  subAgency?: string;
-  agencyId: number | '';
   buildings: IBuilding[];
   parcels: Partial<IParcel[]>;
   assessedLand: number | '';
@@ -186,7 +184,6 @@ export interface IFlatParcel extends IProperty {
   landLegalDescription: string;
   zoning: string;
   zoningPotential: string;
-  agency?: string;
   agencyId: number | '';
   isSensitive: boolean;
   buildings: IBuilding[];
