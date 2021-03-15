@@ -148,7 +148,7 @@ pipeline {
     // ZAP has problems with creating the reports directly in the Jenkins
     // working directory, so they have to be copied over after the fact.
     stage('OWASP Scan') {
-      agent { label 'jenkins-agent-zap' }
+      agent { label 'owasp-zap' }
       steps {
         script {
           sh 'mkdir -p zap-output'
